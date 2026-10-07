@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0b10" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Octane CRM V8 — Enterprise Multi-Tenant SaaS CRM" />
+  <title>Octane CRM · v8 SaaS</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Chart.js 4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" crossorigin="anonymous" defer></script>
+
+  <!-- Tailwind JIT -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            base: 'var(--bg-app)', surface: 'var(--bg-surface)', surface2: 'var(--bg-surface-2)',
+            hover: 'var(--bg-hover)', input: 'var(--bg-input)',
+            line: 'var(--border-line)', 'line-strong': 'var(--border-strong)', 'line-focus': 'var(--border-focus)',
+            txt: 'var(--txt-primary)', 'txt-secondary': 'var(--txt-secondary)',
+            'txt-muted': 'var(--txt-muted)', 'txt-dim': 'var(--txt-dim)',
+            accent: { DEFAULT: 'var(--accent)', hover: 'var(--accent-hover)', soft: 'var(--accent-soft)' },
+            violet: 'var(--violet)', danger: 'var(--danger)', 'danger-soft': 'var(--danger-soft)',
+            warn: 'var(--warn)', 'warn-soft': 'var(--warn-soft)',
+            ok: 'var(--ok)', 'ok-soft': 'var(--ok-soft)',
+            info: 'var(--info)', 'info-soft': 'var(--info-soft)',
+          },
+          borderRadius: { xs: '6px', sm: '8px', md: '10px', lg: '12px', xl: '16px', '2xl': '20px' },
+          boxShadow: { card: 'var(--shadow-card)', pop: 'var(--shadow-pop)', modal: 'var(--shadow-modal)', glow: 'var(--shadow-glow)' },
+          keyframes: {
+            pulseSoft: { '0%,100%': { opacity: 1 }, '50%': { opacity: .45 } },
+            fadeIn: { '0%': { opacity: 0, transform: 'translateY(6px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            slideInRight: { '0%': { opacity: 0, transform: 'translateX(24px)' }, '100%': { opacity: 1, transform: 'translateX(0)' } },
+            ringPulse: { '0%': { boxShadow: '0 0 0 0 rgba(74,222,128,0.55)' }, '70%': { boxShadow: '0 0 0 10px rgba(74,222,128,0)' }, '100%': { boxShadow: '0 0 0 0 rgba(74,222,128,0)' } },
+            spinSlow: { to: { transform: 'rotate(360deg)' } },
+          },
+          animation: {
+            pulseSoft: 'pulseSoft 2s ease-in-out infinite',
+            fadeIn: 'fadeIn .22s ease-out both',
+            slideInRight: 'slideInRight .28s cubic-bezier(.2,.9,.3,1.1) both',
+            ringPulse: 'ringPulse 2s infinite',
+            spinSlow: 'spinSlow 1.4s linear infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* =========================================================
+       DESIGN TOKENS — DARK
+    ========================================================= */
+    :root, [data-theme="dark"] {
+      color-scheme: dark;
+      --bg-app: #0a0b10; --bg-surface: #12141c; --bg-surface-2: #181b25;
+      --bg-hover: #1f2330; --bg-input: #0f1118;
+      --border-line: rgba(255,255,255,.06); --border-strong: rgba(255,255,255,.12);
+      --border-focus: rgba(109,140,255,.55);
+      --txt-primary: #e8eaf0; --txt-secondary: #8a91a6; --txt-muted: #5a6178; --txt-dim: #3d4358;
+      --accent: #6d8cff; --accent-hover: #5b7cff; --accent-soft: rgba(109,140,255,.14);
+      --violet: #8f6dff; --danger: #ff5d5d; --danger-soft: rgba(255,93,93,.12);
+      --warn: #ffb648; --warn-soft: rgba(255,182,72,.12);
+      --ok: #4ade80; --ok-soft: rgba(74,222,128,.12);
+      --info: #5fc9e8; --info-soft: rgba(95,201,232,.12);
+      --shadow-card: 0 1px 2px rgba(0,0,0,.4);
+      --shadow-pop: 0 12px 40px -8px rgba(0,0,0,.65);
+      --shadow-modal: 0 32px 80px -16px rgba(0,0,0,.75);
+      --shadow-glow: 0 0 0 3px rgba(109,140,255,.18);
+      --scrollbar-thumb: rgba(255,255,255,.08);
+      --scrollbar-thumb-hover: rgba(255,255,255,.16);
+      --sidebar-w: 260px; --header-h: 64px;
+    }
+
+    /* LIGHT */
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg-app: #f7f8fb; --bg-surface: #ffffff; --bg-surface-2: #f1f2f6;
+      --bg-hover: #e8eaef; --bg-input: #f8f9fc;
+      --border-line: rgba(15,20,40,.08); --border-strong: rgba(15,20,40,.16);
+      --border-focus: rgba(79,110,220,.55);
+      --txt-primary: #14161f; --txt-secondary: #5c6273; --txt-muted: #8b92a5; --txt-dim: #b6bbca;
+      --accent: #4f6edc; --accent-hover: #3f5cc4; --accent-soft: rgba(79,110,220,.10);
+      --violet: #7c5adb; --danger: #e04040; --danger-soft: rgba(224,64,64,.10);
+      --warn: #d99420; --warn-soft: rgba(217,148,32,.10);
+      --ok: #20a850; --ok-soft: rgba(32,168,80,.10);
+      --info: #2298b8; --info-soft: rgba(34,152,184,.10);
+      --shadow-card: 0 1px 2px rgba(15,20,40,.06);
+      --shadow-pop: 0 12px 40px -8px rgba(15,20,40,.14);
+      --shadow-modal: 0 32px 80px -16px rgba(15,20,40,.22);
+      --shadow-glow: 0 0 0 3px rgba(79,110,220,.16);
+      --scrollbar-thumb: rgba(15,20,40,.15);
+      --scrollbar-thumb-hover: rgba(15,20,40,.28);
+    }
+
+    /* =========================================================
+       RESET
+    ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--bg-app); color: var(--txt-primary);
+      font-family: 'Inter', 'Cairo', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+      transition: background-color .2s, color .2s;
+    }
+    body { font-size: 14px; line-height: 1.5; }
+    button { font-family: inherit; }
+    h1, h2, h3, h4, h5, p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+    [dir="rtl"] body { font-family: 'Cairo', 'Inter', system-ui, sans-serif; }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb); border-radius: 999px;
+      border: 2px solid transparent; background-clip: padding-box;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); background-clip: padding-box; }
+    * { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+
+    :focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; border-radius: 6px; }
+    ::selection { background: var(--accent-soft); color: var(--txt-primary); }
+
+    /* =========================================================
+       SCREENS (Splash / Login / Super-Admin / Tenant App)
+    ========================================================= */
+    .screen { position: fixed; inset: 0; display: none; z-index: 1; }
+    .screen.is-active { display: flex; }
+
+    #screen-splash { z-index: 9000; background: var(--bg-app); align-items: center; justify-content: center; flex-direction: column; gap: 18px; }
+    #screen-splash .brand-mark {
+      width: 64px; height: 64px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 28px; color: #fff;
+      box-shadow: 0 12px 40px -8px rgba(109,140,255,.55);
+    }
+    #screen-splash .spin {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--border-line); border-top-color: var(--accent);
+      animation: spinSlow .9s linear infinite;
+    }
+
+    #screen-login {
+      background:
+        radial-gradient(1200px 600px at 15% 0%, var(--accent-soft), transparent 60%),
+        radial-gradient(900px 500px at 100% 100%, rgba(143,109,255,.06), transparent 55%),
+        var(--bg-app);
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    #screen-login .login-card {
+      width: 100%; max-width: 440px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-shadow: var(--shadow-modal);
+    }
+
+    /* =========================================================
+       APP SHELLS
+    ========================================================= */
+    #screen-tenant, #screen-super-admin {
+      display: none;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      height: 100vh; width: 100vw;
+    }
+    #screen-tenant.is-active, #screen-super-admin.is-active { display: grid; }
+
+    @media (max-width: 1024px) {
+      #screen-tenant.is-active, #screen-super-admin.is-active { grid-template-columns: 0 1fr; }
+      #app-sidebar, #super-sidebar { transform: translateX(-100%); transition: transform .25s; z-index: 60; }
+      #app-sidebar.is-mobile-open, #super-sidebar.is-mobile-open { transform: translateX(0); }
+      [dir="rtl"] #app-sidebar, [dir="rtl"] #super-sidebar { transform: translateX(100%); }
+      [dir="rtl"] #app-sidebar.is-mobile-open, [dir="rtl"] #super-sidebar.is-mobile-open { transform: translateX(0); }
+    }
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================= */
+    #app-sidebar, #super-sidebar {
+      background: var(--bg-surface);
+      border-inline-end: 1px solid var(--border-line);
+      display: flex; flex-direction: column; min-height: 0;
+      transition: transform .25s;
+    }
+
+    .nav-group-label {
+      padding: 16px 12px 6px;
+      font-size: 10px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--txt-dim); user-select: none;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 8px;
+      color: var(--txt-secondary); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: color .15s, background-color .15s;
+      user-select: none; border: none; background: transparent;
+      width: 100%; text-align: start; font-family: inherit;
+    }
+    .nav-item:hover { color: var(--txt-primary); background: var(--bg-hover); }
+    .nav-item.is-active, .nav-item[aria-current="page"] {
+      color: var(--txt-primary); background: var(--accent-soft);
+    }
+    .nav-item.is-active::before, .nav-item[aria-current="page"]::before {
+      content: ''; position: absolute;
+      inset-inline-start: -12px; top: 8px; bottom: 8px; width: 2px;
+      background: var(--accent); border-radius: 0 2px 2px 0;
+    }
+    [dir="rtl"] .nav-item.is-active::before, [dir="rtl"] .nav-item[aria-current="page"]::before {
+      border-radius: 2px 0 0 2px;
+    }
+    .nav-item .nav-icon { width: 18px; text-align: center; font-size: 13px; flex-shrink: 0; }
+    .nav-item .nav-label { flex: 1; min-width: 0; }
+    .nav-item .nav-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .02em;
+      padding: 1px 6px; border-radius: 999px;
+      background: var(--danger-soft); color: var(--danger);
+      border: 1px solid var(--danger); opacity: .9;
+    }
+    .nav-item .nav-kbd {
+      font-size: 10px; font-weight: 600; color: var(--txt-muted);
+      background: var(--bg-surface-2); border: 1px solid var(--border-line);
+      padding: 1px 5px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-item.nav-item--locked { opacity: .5; }
+    .nav-item.nav-item--locked .nav-kbd { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+    #app-header, #super-header {
+      background: var(--bg-app);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      border-bottom: 1px solid var(--border-line);
+      display: flex; align-items: center; gap: 14px;
+      padding: 0 20px; height: var(--header-h);
+      flex-shrink: 0; position: relative; z-index: 30;
+    }
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; height: 34px; padding: 0 14px; border-radius: 8px;
+      border: 1px solid transparent; font-size: 12.5px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; font-family: inherit; line-height: 1;
+      transition: background .15s, border-color .15s, color .15s, transform .1s, filter .15s;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-hover)); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-secondary { background: var(--bg-surface-2); color: var(--txt-primary); border-color: var(--border-line); }
+    .btn-secondary:hover:not(:disabled) { background: var(--bg-hover); border-color: var(--border-strong); }
+    .btn-ghost { background: transparent; color: var(--txt-secondary); border-color: transparent; }
+    .btn-ghost:hover:not(:disabled) { background: var(--bg-hover); color: var(--txt-primary); }
+    .btn-danger { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+    .btn-danger:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-warn { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+    .btn-ok { background: var(--ok-soft); color: var(--ok); border-color: var(--ok); }
+    .btn-sm { height: 28px; padding: 0 10px; font-size: 11.5px; }
+    .btn-lg { height: 40px; padding: 0 20px; font-size: 13.5px; }
+
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: transparent; border: 1px solid transparent;
+      color: var(--txt-secondary); cursor: pointer; font-size: 14px;
+      transition: all .15s; font-family: inherit; flex-shrink: 0;
+    }
+    .icon-btn:hover { color: var(--txt-primary); background: var(--bg-hover); border-color: var(--border-line); }
+    .icon-btn-sm { width: 28px; height: 28px; font-size: 12px; border-radius: 6px; }
+    .icon-btn.is-active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+
+    /* =========================================================
+       CHIP
+    ========================================================= */
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 30px; padding: 0 12px; border-radius: 999px;
+      background: var(--bg-surface-2); border: 1px solid var(--border-line);
+      color: var(--txt-secondary); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap;
+    }
+    .chip:hover { color: var(--txt-primary); background: var(--bg-hover); border-color: var(--border-strong); }
+    .chip.is-active { color: #fff; background: var(--accent); border-color: var(--accent); box-shadow: var(--shadow-glow); }
+    .chip[data-variant="ok"].is-active { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
+    .chip[data-variant="warn"].is-active { background: var(--warn); border-color: var(--warn); color: #1a1205; box-shadow: 0 0 0 3px var(--warn-soft); }
+    .chip[data-variant="danger"].is-active { background: var(--danger); border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-soft); }
+    .chip[data-variant="info"].is-active { background: var(--info); border-color: var(--info); color: #05222b; box-shadow: 0 0 0 3px var(--info-soft); }
+
+    /* =========================================================
+       KPI CHIP
+    ========================================================= */
+    .kpi-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 8px;
+      background: var(--bg-surface-2); border: 1px solid var(--border-line);
+      font-size: 11px; font-weight: 500; color: var(--txt-secondary); white-space: nowrap;
+    }
+    .kpi-chip strong { color: var(--txt-primary); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .kpi-chip.is-danger strong { color: var(--danger); }
+    .kpi-chip.is-ok strong { color: var(--ok); }
+    .kpi-chip.is-warn strong { color: var(--warn); }
+
+    /* =========================================================
+       MAIN CONTENT VIEW
+    ========================================================= */
+    #main-content-view, #super-admin-content-view {
+      flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+      padding: 24px 32px 48px; scroll-behavior: smooth;
+      background: var(--bg-app); position: relative;
+    }
+    #main-content-view::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(1200px 600px at 15% -10%, var(--accent-soft), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(143,109,255,.04), transparent 55%);
+    }
+    @media (max-width: 768px) {
+      #main-content-view, #super-admin-content-view { padding: 16px 16px 40px; }
+    }
+    .view-container {
+      position: relative; z-index: 1; max-width: 1600px; margin: 0 auto;
+      width: 100%; animation: fadeIn .22s ease-out both;
+    }
+
+    /* =========================================================
+       MODAL OVERLAY + PANEL
+    ========================================================= */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(5,6,10,.72);
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity .2s;
+    }
+    .modal-overlay.is-open { opacity: 1; pointer-events: auto; }
+    .modal-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px; box-shadow: var(--shadow-modal);
+      width: 100%; max-width: 560px; max-height: 92vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      transform: translateY(8px) scale(.98);
+      transition: transform .24s cubic-bezier(.2,.9,.3,1.1);
+    }
+    .modal-overlay.is-open .modal-panel { transform: translateY(0) scale(1); }
+    .modal-panel.is-wide { max-width: 720px; }
+    .modal-panel.is-xwide { max-width: 960px; }
+    .modal-panel.is-full { max-width: 1180px; height: 90vh; }
+
+    /* =========================================================
+       DRAWER
+    ========================================================= */
+    .drawer {
+      position: fixed; top: 0; bottom: 0; inset-inline-end: 0;
+      width: min(520px, 100vw);
+      background: var(--bg-surface);
+      border-inline-start: 1px solid var(--border-line);
+      box-shadow: var(--shadow-modal);
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.2,.9,.3,1.1);
+      z-index: 1500; display: flex; flex-direction: column; overflow: hidden;
+    }
+    [dir="rtl"] .drawer { transform: translateX(-100%); }
+    .drawer.is-open { transform: translateX(0) !important; }
+    .drawer.is-wide { width: min(620px, 100vw); }
+    .drawer-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(5,6,10,.55);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      z-index: 1400; opacity: 0; pointer-events: none;
+      transition: opacity .22s;
+    }
+    .drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+    /* =========================================================
+       VERTICAL TIMELINE
+    ========================================================= */
+    .timeline { position: relative; padding-inline-start: 4px; }
+    .timeline-item { position: relative; padding: 10px 0 10px 32px; display: flex; gap: 10px; }
+    [dir="rtl"] .timeline-item { padding: 10px 32px 10px 0; }
+    .timeline-item::before {
+      content: ''; position: absolute;
+      inset-inline-start: 11px; top: 30px; bottom: 0; width: 1px;
+      background: var(--border-line);
+    }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot {
+      position: absolute; inset-inline-start: 0; top: 12px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--bg-surface-2); border: 1px solid var(--border-line);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; flex-shrink: 0; z-index: 1;
+    }
+
+    /* =========================================================
+       TOASTS
+    ========================================================= */
+    #toast-host {
+      position: fixed; bottom: 24px; inset-inline-end: 24px;
+      z-index: 2000; display: flex; flex-direction: column-reverse;
+      gap: 10px; pointer-events: none;
+      max-width: min(420px, calc(100vw - 32px));
+    }
+    .toast {
+      pointer-events: auto;
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; background: var(--bg-surface);
+      border: 1px solid var(--border-line);
+      border-inline-start: 3px solid var(--accent);
+      border-radius: 10px; box-shadow: var(--shadow-pop);
+      font-size: 13px; color: var(--txt-primary);
+      animation: slideInRight .28s cubic-bezier(.2,.9,.3,1.1) both;
+      cursor: default;
+    }
+    .toast.is-interactive { cursor: pointer; }
+    .toast.is-interactive:hover { border-color: var(--border-strong); }
+    .toast.is-success { border-inline-start-color: var(--ok); }
+    .toast.is-error { border-inline-start-color: var(--danger); }
+    .toast.is-warning { border-inline-start-color: var(--warn); }
+    .toast.is-info { border-inline-start-color: var(--accent); }
+
+    /* =========================================================
+       FORM CONTROLS
+    ========================================================= */
+    .field-label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--txt-secondary); margin-bottom: 6px;
+    }
+    .field-input {
+      width: 100%; height: 40px; padding: 0 12px; border-radius: 8px;
+      background: var(--bg-input); border: 1px solid var(--border-line);
+      color: var(--txt-primary); font-size: 13px; font-family: inherit;
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .field-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .field-input::placeholder { color: var(--txt-muted); }
+    textarea.field-input { height: auto; padding: 10px 12px; resize: vertical; min-height: 90px; line-height: 1.55; }
+    select.field-input {
+      appearance: none; padding-inline-end: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a91a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      cursor: pointer;
+    }
+    [dir="rtl"] select.field-input { background-position: left 10px center; }
+
+    /* =========================================================
+       MISC
+    ========================================================= */
+    .is-hidden { display: none !important; }
+    .surface-card {
+      background: var(--bg-surface); border: 1px solid var(--border-line);
+      border-radius: 12px;
+    }
+    .divide-line > * + * { border-top: 1px solid var(--border-line); }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Avatar */
+    .avatar {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; font-weight: 700; color: #fff;
+      flex-shrink: 0; background: linear-gradient(135deg, var(--accent), var(--violet));
+      font-family: inherit; user-select: none;
+      background-size: cover; background-position: center;
+    }
+    .avatar-xs { width: 22px; height: 22px; font-size: 10px; }
+    .avatar-sm { width: 28px; height: 28px; font-size: 11px; }
+    .avatar-md { width: 36px; height: 36px; font-size: 13px; }
+    .avatar-lg { width: 44px; height: 44px; font-size: 15px; }
+    .avatar-xl { width: 64px; height: 64px; font-size: 22px; }
+
+    /* Dropdown */
+    .dropdown {
+      position: absolute; top: calc(100% + 8px); inset-inline-end: 0;
+      min-width: 260px; background: var(--bg-surface);
+      border: 1px solid var(--border-strong); border-radius: 12px;
+      box-shadow: var(--shadow-pop); padding: 6px;
+      opacity: 0; pointer-events: none; transform: translateY(-4px);
+      transition: opacity .15s, transform .15s; z-index: 200;
+    }
+    .dropdown.is-open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 8px;
+      color: var(--txt-secondary); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all .12s;
+      border: none; background: transparent; width: 100%;
+      text-align: start; font-family: inherit;
+    }
+    .dropdown-item:hover { background: var(--bg-hover); color: var(--txt-primary); }
+    .dropdown-separator { height: 1px; background: var(--border-line); margin: 6px 4px; }
+    .dropdown-label {
+      padding: 8px 10px 4px; font-size: 10px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--txt-dim);
+    }
+
+    /* Command Palette */
+    .cmd-palette-panel {
+      width: 100%; max-width: 640px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong); border-radius: 14px;
+      box-shadow: var(--shadow-modal); overflow: hidden;
+      transform: translateY(8px) scale(.98);
+      transition: transform .2s cubic-bezier(.2,.9,.3,1.1);
+    }
+    .modal-overlay.is-open .cmd-palette-panel { transform: translateY(0) scale(1); }
+    .cmd-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; cursor: pointer; border-radius: 8px;
+      color: var(--txt-secondary); font-size: 13px;
+      transition: background .12s, color .12s;
+      border: none; background: transparent; width: 100%; text-align: start;
+      font-family: inherit;
+    }
+    .cmd-item:hover, .cmd-item.is-selected { background: var(--bg-hover); color: var(--txt-primary); }
+    .cmd-item.is-selected { background: var(--accent-soft); color: var(--accent); }
+    .cmd-item .cmd-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--bg-surface-2); border: 1px solid var(--border-line);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px; flex-shrink: 0;
+    }
+
+    /* Table */
+    .data-table { width: 100%; text-align: start; border-collapse: collapse; }
+    .data-table thead { background: var(--bg-surface-2); border-bottom: 1px solid var(--border-line); }
+    .data-table th {
+      padding: 12px 16px; font-size: 11px; font-weight: 700;
+      color: var(--txt-muted); text-transform: uppercase; letter-spacing: .06em;
+      text-align: start;
+    }
+    .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-line); font-size: 13px; }
+    .data-table tbody tr:hover { background: var(--bg-hover); }
+
+    /* Progress bar */
+    .progress-track { width: 100%; height: 6px; border-radius: 999px; background: var(--bg-hover); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: inherit; transition: width .4s ease, background-color .3s; }
+
+    /* Switch */
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch-slider {
+      position: absolute; inset: 0; background: var(--border-strong);
+      border-radius: 999px; cursor: pointer; transition: background .2s;
+    }
+    .switch-slider::before {
+      content: ''; position: absolute; width: 16px; height: 16px;
+      left: 3px; top: 3px; background: #fff; border-radius: 50%;
+      transition: transform .2s;
+    }
+    [dir="rtl"] .switch-slider::before { left: auto; right: 3px; }
+    .switch input:checked + .switch-slider { background: var(--accent); }
+    .switch input:checked + .switch-slider::before { transform: translateX(18px); }
+    [dir="rtl"] .switch input:checked + .switch-slider::before { transform: translateX(-18px); }
+
+    /* Impersonation banner */
+    .impersonation-banner {
+      background: linear-gradient(90deg, var(--warn), #ff8f4d);
+      color: #1a1205; font-weight: 700; font-size: 12px;
+      padding: 8px 16px; display: flex; align-items: center; gap: 10px;
+    }
+
+    /* Watermark for coming soon */
+    .coming-soon-shell {
+      position: relative; overflow: hidden;
+      padding: 64px 32px; text-align: center;
+    }
+    .coming-soon-shell::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, transparent 0 40px, rgba(255,255,255,.015) 40px 80px);
+      pointer-events: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 1280px) { #header-kpi-strip { display: none; } }
+    @media (max-width: 900px) { #app-header, #super-header { padding: 0 12px; gap: 8px; } }
+    @media (max-width: 640px) { #global-search-wrapper { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- ================================================================
+     SPLASH
+================================================================= -->
+<div id="screen-splash" class="screen is-active">
+  <div class="brand-mark" aria-hidden="true">O</div>
+  <div class="spin" aria-hidden="true"></div>
+  <p style="color: var(--txt-muted); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;">
+    Initializing Octane CRM
+  </p>
+</div>
+
+
+<!-- ================================================================
+     SCREEN 1 · LOGIN
+================================================================= -->
+<div id="screen-login" class="screen">
+  <div class="login-card">
+    <!-- Brand -->
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+      <div class="brand-mark" style="width: 44px; height: 44px; border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), var(--violet));
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 20px; color: #fff;" aria-hidden="true">O</div>
+      <div>
+        <div style="color: var(--txt-primary); font-weight: 700; font-size: 15px;">Octane CRM</div>
+        <div style="color: var(--txt-muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;">v8 · Enterprise SaaS</div>
+      </div>
+    </div>
+
+    <h1 style="font-size: 22px; font-weight: 800; color: var(--txt-primary); margin-bottom: 6px;">Welcome back</h1>
+    <p style="font-size: 13px; color: var(--txt-secondary); margin-bottom: 24px;">
+      Sign in to your workspace to continue.
+    </p>
+
+    <!-- Tenant selector -->
+    <div style="margin-bottom: 16px;">
+      <label class="field-label" for="login-tenant">Workspace</label>
+      <select id="login-tenant" class="field-input">
+        <!-- Populated by JS -->
+      </select>
+    </div>
+
+    <!-- Email -->
+    <div style="margin-bottom: 14px;">
+      <label class="field-label" for="login-email">Email</label>
+      <input id="login-email" type="email" class="field-input" placeholder="you@company.com" autocomplete="email" />
+    </div>
+
+    <!-- Password -->
+    <div style="margin-bottom: 8px;">
+      <label class="field-label" for="login-password">Password</label>
+      <div style="position: relative;">
+        <input id="login-password" type="password" class="field-input" placeholder="••••••••" autocomplete="current-password" style="padding-inline-end: 60px;" />
+        <button type="button" data-action="toggle-login-password"
+          style="position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%);
+                 font-size: 11px; font-weight: 600; color: var(--accent);
+                 background: transparent; border: none; cursor: pointer; padding: 4px 8px;">Show</button>
+      </div>
+    </div>
+
+    <div id="login-error" class="is-hidden" style="font-size: 12px; color: var(--danger); margin-bottom: 12px;"></div>
+
+    <!-- Actions -->
+    <button type="button" class="btn btn-primary btn-lg" data-action="do-login" style="width: 100%; margin-top: 6px;">
+      <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>
+      Sign In
+    </button>
+
+    <div style="display: flex; align-items: center; gap: 12px; margin: 20px 0 12px; color: var(--txt-muted); font-size: 11px;">
+      <div style="flex: 1; height: 1px; background: var(--border-line);"></div>
+      <span>OR</span>
+      <div style="flex: 1; height: 1px; background: var(--border-line);"></div>
+    </div>
+
+    <button type="button" class="btn btn-secondary" data-action="demo-login" style="width: 100%;">
+      <i class="fa-solid fa-bolt text-warn" aria-hidden="true"></i>
+      Continue as Demo Admin
+    </button>
+
+    <button type="button" class="btn btn-ghost" data-action="super-admin-login" style="width: 100%; margin-top: 8px;">
+      <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+      Super-Admin Portal
+    </button>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     SCREEN 2 · SUPER-ADMIN PORTAL (SaaS owner)
+================================================================= -->
+<div id="screen-super-admin" class="screen">
+
+  <!-- Sidebar -->
+  <aside id="super-sidebar" class="min-h-0">
+    <div style="padding: 20px 20px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-line);">
+      <div style="width: 36px; height: 36px; border-radius: 10px;
+                  background: linear-gradient(135deg, var(--danger), var(--warn));
+                  display: flex; align-items: center; justify-content: center;
+                  font-weight: 900; font-size: 14px; color: #fff;" aria-hidden="true">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div style="min-width: 0;">
+        <div style="font-weight: 700; font-size: 13px; color: var(--txt-primary);">Octane SaaS</div>
+        <div style="font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-muted);">Super-Admin</div>
+      </div>
+    </div>
+
+    <nav style="flex: 1; overflow-y: auto; padding: 8px 12px; min-height: 0;" aria-label="Super admin navigation">
+      <div class="nav-group-label">Platform</div>
+      <button type="button" class="nav-item is-active" data-super-view="overview" aria-current="page">
+        <i class="fa-solid fa-chart-line nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Overview</span>
+      </button>
+      <button type="button" class="nav-item" data-super-view="tenants">
+        <i class="fa-solid fa-building nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Tenants</span>
+        <span class="nav-badge" data-super-badge="tenants-count">0</span>
+      </button>
+      <button type="button" class="nav-item" data-super-view="subscriptions">
+        <i class="fa-solid fa-credit-card nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Subscriptions</span>
+      </button>
+
+      <div class="nav-group-label">Revenue</div>
+      <button type="button" class="nav-item" data-super-view="mrr">
+        <i class="fa-solid fa-sack-dollar nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">MRR / ARR</span>
+      </button>
+      <button type="button" class="nav-item" data-super-view="usage">
+        <i class="fa-solid fa-chart-simple nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Usage & Seats</span>
+      </button>
+
+      <div class="nav-group-label">Configuration</div>
+      <button type="button" class="nav-item" data-super-view="feature-flags">
+        <i class="fa-solid fa-toggle-on nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Feature Flags</span>
+      </button>
+      <button type="button" class="nav-item" data-super-view="tiers">
+        <i class="fa-solid fa-layer-group nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Tier Plans</span>
+      </button>
+      <button type="button" class="nav-item" data-super-view="system">
+        <i class="fa-solid fa-server nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">System Health</span>
+      </button>
+    </nav>
+
+    <!-- Footer -->
+    <div style="border-top: 1px solid var(--border-line); padding: 12px; display: flex; align-items: center; gap: 8px;">
+      <div class="avatar avatar-sm" aria-hidden="true">S</div>
+      <div style="min-width: 0; flex: 1;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--txt-primary);" class="truncate">Super Admin</div>
+        <div style="font-size: 10px; color: var(--txt-muted);" class="truncate">platform@octane.crm</div>
+      </div>
+      <button type="button" class="icon-btn icon-btn-sm" data-action="super-admin-logout" aria-label="Log out" title="Log out">
+        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div style="display: flex; flex-direction: column; min-height: 0; min-width: 0;">
+
+    <header id="super-header" role="banner">
+      <button type="button" class="icon-btn lg:hidden" data-action="toggle-mobile-sidebar" data-target="super-sidebar" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+
+      <div style="min-width: 0;">
+        <h1 id="super-view-title" style="font-size: 15px; font-weight: 600; color: var(--txt-primary); line-height: 1.2;">
+          Platform Overview
+        </h1>
+        <p id="super-view-subtitle" style="font-size: 11px; color: var(--txt-muted); line-height: 1.2;">
+          SaaS health & tenant metrics
+        </p>
+      </div>
+
+      <div style="margin-inline-start: auto; display: flex; align-items: center; gap: 8px;">
+        <div id="super-header-kpi-strip" style="display: flex; align-items: center; gap: 6px;">
+          <div class="kpi-chip is-ok" title="Monthly recurring revenue">
+            <i class="fa-solid fa-dollar-sign text-[10px]" aria-hidden="true"></i>
+            <span>MRR</span>
+            <strong id="super-kpi-mrr">$0</strong>
+          </div>
+          <div class="kpi-chip is-warn" title="Active tenants">
+            <i class="fa-solid fa-building text-[10px]" aria-hidden="true"></i>
+            <span>Tenants</span>
+            <strong id="super-kpi-tenants">0</strong>
+          </div>
+          <div class="kpi-chip is-danger" title="Past-due subscriptions">
+            <i class="fa-solid fa-triangle-exclamation text-[10px]" aria-hidden="true"></i>
+            <span>Past Due</span>
+            <strong id="super-kpi-pastdue">0</strong>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-sm" data-action="open-tenant-form">
+          <i class="fa-solid fa-plus text-[11px]" aria-hidden="true"></i>
+          New Tenant
+        </button>
+
+        <button type="button" class="icon-btn" data-action="toggle-theme" aria-label="Theme">
+          <i id="super-theme-icon" class="fa-solid fa-moon" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <main id="super-admin-content-view" role="main" aria-live="polite" aria-busy="false">
+      <!-- Rendered by JS: Overview / Tenants / Subscriptions / MRR / Usage / Feature Flags / Tiers / System -->
+    </main>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     SCREEN 3 · TENANT APP (the actual CRM)
+================================================================= -->
+<div id="screen-tenant" class="screen">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside id="app-sidebar" class="min-h-0" aria-label="Primary navigation">
+
+    <!-- Tenant brand (white-label) -->
+    <div style="padding: 20px 20px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-line);">
+      <div id="tenant-logo" style="width: 36px; height: 36px; border-radius: 10px;
+                  background: linear-gradient(135deg, var(--accent), var(--violet));
+                  display: flex; align-items: center; justify-content: center;
+                  font-weight: 900; font-size: 16px; color: #fff; flex-shrink: 0;" aria-hidden="true">O</div>
+      <div style="min-width: 0; flex: 1;">
+        <div id="tenant-name" style="font-weight: 700; font-size: 13px; color: var(--txt-primary);" class="truncate">Octane Realty</div>
+        <div id="tenant-tier" style="font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--txt-muted);">
+          Enterprise Tier
+        </div>
+      </div>
+    </div>
+
+    <!-- Impersonation banner (hidden by default) -->
+    <div id="impersonation-banner" class="impersonation-banner is-hidden">
+      <i class="fa-solid fa-user-secret" aria-hidden="true"></i>
+      <span style="flex: 1;">Impersonating tenant</span>
+      <button type="button" data-action="exit-impersonation"
+        style="background: rgba(0,0,0,.2); color: inherit; font-weight: 700; font-size: 11px;
+               padding: 3px 8px; border-radius: 6px; border: none; cursor: pointer;">
+        Exit
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav style="flex: 1; overflow-y: auto; padding: 8px 12px; min-height: 0;" aria-label="Modules">
+
+      <div class="nav-group-label">Workspace</div>
+      <button type="button" class="nav-item is-active" data-view="action-center" aria-current="page">
+        <i class="fa-solid fa-bolt nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Action Center</span>
+        <span class="nav-badge" data-badge="sla-critical">0</span>
+      </button>
+      <button type="button" class="nav-item" data-view="sales-pipeline">
+        <i class="fa-solid fa-diagram-project nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Sales Pipeline</span>
+        <span class="nav-kbd">⌘1</span>
+      </button>
+      <button type="button" class="nav-item" data-view="lead-rotation">
+        <i class="fa-solid fa-arrows-spin nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Lead Rotation</span>
+        <span class="nav-badge" data-badge="claim-pool">0</span>
+      </button>
+      <button type="button" class="nav-item" data-view="property-inventory">
+        <i class="fa-solid fa-building-columns nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Property Inventory</span>
+        <span class="nav-kbd" data-feature-gate="inventory">Tier</span>
+      </button>
+      <button type="button" class="nav-item" data-view="cil-radar">
+        <i class="fa-solid fa-satellite-dish nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">CIL Radar</span>
+      </button>
+
+      <div class="nav-group-label">Growth</div>
+      <button type="button" class="nav-item" data-view="omnichannel">
+        <i class="fa-solid fa-comments nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Omnichannel Inbox</span>
+        <span class="nav-kbd" data-feature-gate="omnichannel">Pro</span>
+      </button>
+      <button type="button" class="nav-item" data-view="attribution">
+        <i class="fa-solid fa-bullseye nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Marketing Attribution</span>
+        <span class="nav-kbd" data-feature-gate="attribution">Pro</span>
+      </button>
+      <button type="button" class="nav-item" data-view="commission">
+        <i class="fa-solid fa-trophy nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Commission & Leaderboard</span>
+        <span class="nav-kbd" data-feature-gate="commission">Pro</span>
+      </button>
+      <button type="button" class="nav-item" data-view="cpq">
+        <i class="fa-solid fa-file-invoice-dollar nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">CPQ & Quotes</span>
+        <span class="nav-kbd" data-feature-gate="cpq">Pro</span>
+      </button>
+
+      <div class="nav-group-label">Intelligence</div>
+      <button type="button" class="nav-item" data-view="call-intel">
+        <i class="fa-solid fa-waveform-lines nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">AI Call Intelligence</span>
+        <span class="nav-kbd" data-feature-gate="ai_calls">AI</span>
+      </button>
+      <button type="button" class="nav-item" data-view="predictive">
+        <i class="fa-solid fa-brain nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Predictive & NBA</span>
+        <span class="nav-kbd" data-feature-gate="predictive">AI</span>
+      </button>
+      <button type="button" class="nav-item" data-view="cadences">
+        <i class="fa-solid fa-clock-rotate-left nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Sales Cadences</span>
+      </button>
+      <button type="button" class="nav-item" data-view="dsr">
+        <i class="fa-solid fa-cube nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Digital Sales Room</span>
+        <span class="nav-kbd" data-feature-gate="dsr">AI</span>
+      </button>
+      <button type="button" class="nav-item" data-view="voice-simulator">
+        <i class="fa-solid fa-microphone-lines nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">AI Voice Simulator</span>
+      </button>
+      <button type="button" class="nav-item" data-view="financial-engine">
+        <i class="fa-solid fa-chart-line nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Financial Engine</span>
+      </button>
+      <button type="button" class="nav-item" data-view="analytics">
+        <i class="fa-solid fa-chart-pie nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Analytics</span>
+      </button>
+
+      <div class="nav-group-label">Administration</div>
+      <button type="button" class="nav-item" data-view="users">
+        <i class="fa-solid fa-users-gear nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">User Management</span>
+      </button>
+      <button type="button" class="nav-item" data-view="permissions">
+        <i class="fa-solid fa-key nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Roles & Permissions</span>
+      </button>
+      <button type="button" class="nav-item" data-view="rotation-settings">
+        <i class="fa-solid fa-sliders nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Rotation Rules</span>
+      </button>
+      <button type="button" class="nav-item" data-view="branding">
+        <i class="fa-solid fa-palette nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Branding</span>
+      </button>
+      <button type="button" class="nav-item" data-view="integrations">
+        <i class="fa-solid fa-plug nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Integrations</span>
+      </button>
+      <button type="button" class="nav-item" data-view="settings">
+        <i class="fa-solid fa-gear nav-icon" aria-hidden="true"></i>
+        <span class="nav-label">Settings</span>
+        <span class="nav-kbd">⌘,</span>
+      </button>
+    </nav>
+
+    <!-- Footer -->
+    <div style="border-top: 1px solid var(--border-line); padding: 12px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+      <div class="avatar avatar-sm" data-current-user-avatar aria-hidden="true">Y</div>
+      <div style="min-width: 0; flex: 1;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--txt-primary);" class="truncate" data-current-user-name>Youssef</div>
+        <div style="font-size: 10px; color: var(--txt-muted);" class="truncate" data-current-user-role>Admin</div>
+      </div>
+      <button type="button" class="icon-btn icon-btn-sm" data-view="settings" aria-label="Settings" title="Settings">
+        <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN COLUMN ============== -->
+  <div style="display: flex; flex-direction: column; min-height: 0; min-width: 0;">
+
+    <!-- HEADER -->
+    <header id="app-header" role="banner">
+      <button type="button" class="icon-btn lg:hidden" data-action="toggle-mobile-sidebar" data-target="app-sidebar" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+
+      <div style="min-width: 0; flex-shrink: 0;">
+        <h1 id="view-title" style="font-size: 15px; font-weight: 600; color: var(--txt-primary); line-height: 1.2;" class="truncate">Action Center</h1>
+        <p id="view-subtitle" style="font-size: 11px; color: var(--txt-muted); line-height: 1.2;" class="truncate">Real-time SLA monitoring</p>
+      </div>
+
+      <div style="width: 1px; height: 24px; background: var(--border-strong); flex-shrink: 0; display: none;" class="md:block" aria-hidden="true"></div>
+
+      <!-- Global search (leads only) -->
+      <div id="global-search-wrapper" style="display: flex; flex: 1; min-width: 0; max-width: 480px;">
+        <label style="position: relative; flex: 1; min-width: 0;" aria-label="Global search">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; inset-inline-start: 12px; top: 50%; transform: translateY(-50%); color: var(--txt-muted); font-size: 12px; pointer-events: none;" aria-hidden="true"></i>
+          <input id="global-search" type="search" autocomplete="off" spellcheck="false"
+            placeholder="Search leads, projects, phone…"
+            class="field-input"
+            style="height: 36px; padding-inline-start: 36px; padding-inline-end: 64px; font-size: 13px;" />
+          <kbd style="position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%); font-size: 10px; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--txt-muted); background: var(--bg-surface-2); border: 1px solid var(--border-line); border-radius: 4px; padding: 1px 6px; pointer-events: none;">⌘K</kbd>
+        </label>
+      </div>
+
+      <!-- Right cluster -->
+      <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-inline-start: auto;">
+
+        <div id="header-kpi-strip" style="display: flex; align-items: center; gap: 6px;" aria-label="KPIs">
+          <div class="kpi-chip" title="Active pipeline">
+            <i class="fa-solid fa-sack-dollar" style="font-size: 10px; color: var(--txt-muted);" aria-hidden="true"></i>
+            <span>Pipeline</span>
+            <strong id="hdr-kpi-pipeline">$0</strong>
+          </div>
+          <div class="kpi-chip is-danger" title="Overdue follow-ups">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 10px;" aria-hidden="true"></i>
+            <span>Overdue</span>
+            <strong id="hdr-kpi-overdue">0</strong>
+          </div>
+          <div class="kpi-chip is-ok" title="Win rate">
+            <i class="fa-solid fa-trophy" style="font-size: 10px;" aria-hidden="true"></i>
+            <span>Win</span>
+            <strong id="hdr-kpi-winrate">0%</strong>
+          </div>
+          <div class="kpi-chip is-warn" title="Hot leads">
+            <i class="fa-solid fa-fire" style="font-size: 10px;" aria-hidden="true"></i>
+            <span>Hot</span>
+            <strong id="hdr-kpi-hot">0</strong>
+          </div>
+        </div>
+
+        <div class="sync-status" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; background: var(--bg-surface-2); border: 1px solid var(--border-line);" title="Cross-tab sync">
+          <span id="sync-dot" class="w-2 h-2 rounded-full bg-ok animate-ringPulse" style="width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block;" aria-hidden="true"></span>
+          <span id="sync-label" style="font-size: 11px; font-weight: 500; color: var(--txt-secondary);">Live</span>
+        </div>
+
+        <button type="button" class="icon-btn" data-action="open-command-palette" aria-label="Command palette" title="Command palette (⌘K)">
+          <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+        </button>
+
+        <button type="button" class="icon-btn" data-action="toggle-theme" aria-label="Theme" title="Toggle theme">
+          <i id="theme-icon" class="fa-solid fa-moon" aria-hidden="true"></i>
+        </button>
+
+        <button type="button" class="icon-btn" data-action="toggle-language" aria-label="Language" title="العربية / English">
+          <i class="fa-solid fa-language" aria-hidden="true"></i>
+        </button>
+
+        <button type="button" class="icon-btn" style="position: relative;" data-action="open-notifications-drawer" aria-label="Notifications" title="Notifications">
+          <i class="fa-regular fa-bell" aria-hidden="true"></i>
+          <span id="notification-dot" class="is-hidden" style="position: absolute; top: 6px; inset-inline-end: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger);" aria-hidden="true"></span>
+        </button>
+
+        <button type="button" class="btn btn-primary" data-action="open-lead-form" title="Add lead (⌘N)" style="display: none;" class="sm:inline-flex">
+          <i class="fa-solid fa-plus" style="font-size: 11px;" aria-hidden="true"></i>
+          <span>New Lead</span>
+        </button>
+
+        <!-- User menu -->
+        <div style="position: relative;">
+          <button type="button" class="btn btn-secondary" style="padding-inline-start: 4px; padding-inline-end: 8px;" data-action="toggle-user-menu" aria-haspopup="menu" aria-expanded="false">
+            <span class="avatar avatar-sm" data-current-user-avatar aria-hidden="true">Y</span>
+            <span style="text-align: start; display: none;" class="md:block">
+              <span style="display: block; font-size: 12px; font-weight: 600;" class="truncate" data-current-user-name>Youssef</span>
+              <span style="display: block; font-size: 10px; color: var(--txt-muted);" class="truncate" data-current-user-role>Admin</span>
+            </span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--txt-muted);" aria-hidden="true"></i>
+          </button>
+
+          <div id="user-menu" class="dropdown" role="menu" aria-label="User menu">
+            <div class="dropdown-label">Switch Account</div>
+            <div id="user-menu-list"><!-- Populated by JS --></div>
+            <div class="dropdown-separator"></div>
+            <button type="button" class="dropdown-item" data-action="open-user-modal" role="menuitem">
+              <i class="fa-solid fa-user-plus" style="width: 16px; text-align: center; font-size: 12px;" aria-hidden="true"></i>
+              <span>Add User</span>
+            </button>
+            <button type="button" class="dropdown-item" data-view="users" role="menuitem">
+              <i class="fa-solid fa-users-gear" style="width: 16px; text-align: center; font-size: 12px;" aria-hidden="true"></i>
+              <span>Manage Team</span>
+            </button>
+            <div class="dropdown-separator"></div>
+            <button type="button" class="dropdown-item" data-action="open-checkin" role="menuitem">
+              <i class="fa-solid fa-location-dot" style="width: 16px; text-align: center; font-size: 12px;" aria-hidden="true"></i>
+              <span>Check In / Out</span>
+            </button>
+            <button type="button" class="dropdown-item" data-view="settings" role="menuitem">
+              <i class="fa-solid fa-gear" style="width: 16px; text-align: center; font-size: 12px;" aria-hidden="true"></i>
+              <span>Settings</span>
+            </button>
+            <div class="dropdown-separator"></div>
+            <button type="button" class="dropdown-item" data-action="logout" role="menuitem" style="color: var(--danger);">
+              <i class="fa-solid fa-arrow-right-from-bracket" style="width: 16px; text-align: center; font-size: 12px;" aria-hidden="true"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT VIEW — every module mounts here -->
+    <main id="main-content-view" role="main" aria-live="polite" aria-busy="false">
+      <!-- Modules render into this element -->
+    </main>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     COMMAND PALETTE (⌘K)
+================================================================= -->
+<div class="modal-overlay" id="modal-command-palette" style="align-items: flex-start; padding-top: 12vh;" role="dialog" aria-modal="true" aria-labelledby="cmd-palette-input">
+  <div class="cmd-palette-panel">
+    <div style="border-bottom: 1px solid var(--border-line); padding: 4px 4px 0 4px;">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 12px 12px;">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--txt-muted); font-size: 14px;" aria-hidden="true"></i>
+        <input id="cmd-palette-input" type="text" autocomplete="off" spellcheck="false"
+          placeholder="Type a command, search leads, jump to a module…"
+          style="flex: 1; background: transparent; border: none; outline: none;
+                 color: var(--txt-primary); font-size: 14px; font-family: inherit;" />
+        <kbd style="font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--txt-muted); background: var(--bg-surface-2); border: 1px solid var(--border-line); border-radius: 4px; padding: 2px 6px;">ESC</kbd>
+      </div>
+    </div>
+    <div id="cmd-palette-results" style="max-height: 420px; overflow-y: auto; padding: 8px;">
+      <!-- Populated by JS -->
+    </div>
+    <div style="border-top: 1px solid var(--border-line); padding: 8px 14px; display: flex; align-items: center; gap: 14px; font-size: 10px; color: var(--txt-muted);">
+      <span><kbd style="font-family: 'JetBrains Mono', monospace; background: var(--bg-surface-2); border: 1px solid var(--border-line); border-radius: 3px; padding: 0 5px;">↑↓</kbd> Navigate</span>
+      <span><kbd style="font-family: 'JetBrains Mono', monospace; background: var(--bg-surface-2); border: 1px solid var(--border-line); border-radius: 3px; padding: 0 5px;">↵</kbd> Select</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     NOTIFICATION CENTER DRAWER
+================================================================= -->
+<div id="drawer-notifications-backdrop" class="drawer-backdrop" data-action="close-drawer" data-drawer="notifications" aria-hidden="true"></div>
+<aside id="drawer-notifications" class="drawer" role="dialog" aria-modal="true" aria-labelledby="notif-title" aria-hidden="true">
+  <header style="padding: 20px; border-bottom: 1px solid var(--border-line); display: flex; align-items: center; gap: 12px;">
+    <div style="width: 32px; height: 32px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+      <i class="fa-regular fa-bell"></i>
+    </div>
+    <h2 id="notif-title" style="font-size: 15px; font-weight: 700; flex: 1;">Notifications</h2>
+    <button type="button" class="btn btn-ghost btn-sm" data-action="mark-all-notifications-read">
+      Mark all read
+    </button>
+    <button type="button" class="icon-btn" data-action="close-drawer" data-drawer="notifications" aria-label="Close">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-line); display: flex; gap: 6px; flex-wrap: wrap;">
+    <button type="button" class="chip is-active" data-action="filter-notifications" data-filter="all">All</button>
+    <button type="button" class="chip" data-action="filter-notifications" data-filter="sla">SLA Alerts</button>
+    <button type="button" class="chip" data-action="filter-notifications" data-filter="assignments">Assignments</button>
+    <button type="button" class="chip" data-action="filter-notifications" data-filter="approvals">Approvals</button>
+    <button type="button" class="chip" data-action="filter-notifications" data-filter="system">System</button>
+  </div>
+
+  <div id="notifications-list" style="flex: 1; overflow-y: auto; padding: 12px 16px;">
+    <!-- Populated by JS -->
+  </div>
+</aside>
+
+
+<!-- ================================================================
+     LEAD INTERACTION DRAWER
+================================================================= -->
+<div id="drawer-lead-backdrop" class="drawer-backdrop" data-action="close-drawer" data-drawer="lead-interaction" aria-hidden="true"></div>
+<aside id="drawer-lead-interaction" class="drawer is-wide" role="dialog" aria-modal="true" aria-labelledby="drawer-lead-name" aria-hidden="true">
+
+  <header style="padding: 16px 20px; border-bottom: 1px solid var(--border-line); display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+    <div class="avatar avatar-lg" data-drawer-lead="avatar" aria-hidden="true">Y</div>
+    <div style="flex: 1; min-width: 0;">
+      <h2 id="drawer-lead-name" style="font-size: 15px; font-weight: 700; line-height: 1.2;" class="truncate" data-drawer-lead="name">—</h2>
+      <p style="font-size: 11px; color: var(--txt-muted); margin-top: 2px;" class="truncate" data-drawer-lead="contact">—</p>
+    </div>
+    <button type="button" class="icon-btn" data-action="drawer-toggle-claim" title="Claim from pool" style="display: none;" id="drawer-claim-btn">
+      <i class="fa-solid fa-hand" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="icon-btn" data-action="close-drawer" data-drawer="lead-interaction" aria-label="Close">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <div style="flex: 1; overflow-y: auto;">
+
+    <!-- Quick actions row -->
+    <div style="padding: 12px 20px; border-bottom: 1px solid var(--border-line); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-call">
+        <i class="fa-solid fa-phone" style="font-size: 10px;" aria-hidden="true"></i> Call
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-whatsapp">
+        <i class="fa-brands fa-whatsapp" style="font-size: 11px; color: var(--ok);" aria-hidden="true"></i> WhatsApp
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-email">
+        <i class="fa-solid fa-envelope" style="font-size: 10px;" aria-hidden="true"></i> Email
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-edit">
+        <i class="fa-solid fa-pen" style="font-size: 10px;" aria-hidden="true"></i> Edit
+      </button>
+      <div style="margin-inline-start: auto;">
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted);" data-drawer-lead="stage-label">—</span>
+      </div>
+    </div>
+
+    <!-- SLA strip -->
+    <section style="padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted);">SLA</span>
+        <span id="drawer-sla-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--bg-surface-2); color: var(--txt-secondary);">—</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+        <div style="text-align: center;">
+          <div id="drawer-sla-days" style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--txt-primary);">—</div>
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-top: 2px;">Days</div>
+        </div>
+        <div style="text-align: center;">
+          <div id="drawer-sla-hours" style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--txt-primary);">—</div>
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-top: 2px;">Hours</div>
+        </div>
+        <div style="text-align: center;">
+          <div id="drawer-sla-mins" style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--txt-primary);">—</div>
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-top: 2px;">Mins</div>
+        </div>
+      </div>
+      <div class="progress-track" style="margin-top: 12px;">
+        <div id="drawer-sla-progress" class="progress-fill" style="width: 0%;"></div>
+      </div>
+      <div style="margin-top: 10px; display: flex; gap: 8px; align-items: center;">
+        <input type="date" id="drawer-followup-date" class="field-input" style="flex: 1; height: 34px;" />
+        <input type="time" id="drawer-followup-time" class="field-input" style="flex: 1; height: 34px;" />
+        <button type="button" class="btn btn-primary btn-sm" data-action="drawer-save-followup">Set</button>
+      </div>
+    </section>
+
+    <!-- Call dispositions -->
+    <section style="padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted);">Log Call Outcome</span>
+        <span style="font-size: 10px; color: var(--txt-muted);" data-drawer-lead="last-contact">—</span>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="chip" data-action="lead-disposition" data-value="answered" data-variant="ok">
+          <i class="fa-solid fa-phone-volume" style="font-size: 10px;" aria-hidden="true"></i> Answered
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="no_answer" data-variant="warn">
+          <i class="fa-solid fa-phone-slash" style="font-size: 10px;" aria-hidden="true"></i> No Answer
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="busy">
+          <i class="fa-solid fa-circle-xmark" style="font-size: 10px;" aria-hidden="true"></i> Busy
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="voicemail">
+          <i class="fa-solid fa-voicemail" style="font-size: 10px;" aria-hidden="true"></i> Voicemail
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="call_back" data-variant="info">
+          <i class="fa-solid fa-rotate-left" style="font-size: 10px;" aria-hidden="true"></i> Call Back
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="whatsapp" data-variant="ok">
+          <i class="fa-brands fa-whatsapp" style="font-size: 11px;" aria-hidden="true"></i> WhatsApp Sent
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="meeting" data-variant="info">
+          <i class="fa-solid fa-calendar-plus" style="font-size: 10px;" aria-hidden="true"></i> Schedule Meeting
+        </button>
+        <button type="button" class="chip" data-action="lead-disposition" data-value="wrong_number" data-variant="danger">
+          <i class="fa-solid fa-triangle-exclamation" style="font-size: 10px;" aria-hidden="true"></i> Wrong #
+        </button>
+      </div>
+    </section>
+
+    <!-- Quick follow-up chips -->
+    <section style="padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted);">Quick Follow-Up</span>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="lead-followup-custom" style="font-size: 10px; color: var(--accent); padding: 0;">
+          Custom →
+        </button>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button type="button" class="chip" data-action="lead-followup" data-value="2h">+2 Hours</button>
+        <button type="button" class="chip" data-action="lead-followup" data-value="today">Today</button>
+        <button type="button" class="chip" data-action="lead-followup" data-value="tomorrow">Tomorrow 10 AM</button>
+        <button type="button" class="chip" data-action="lead-followup" data-value="3_days">In 3 Days</button>
+        <button type="button" class="chip" data-action="lead-followup" data-value="1_week">Next Week</button>
+        <button type="button" class="chip" data-action="lead-followup" data-value="1_month">Next Month</button>
+      </div>
+      <div id="drawer-followup-summary" style="margin-top: 10px; font-size: 11px; color: var(--txt-muted);">
+        No follow-up scheduled
+      </div>
+    </section>
+
+    <!-- Meta summary -->
+    <section style="padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+        <div class="surface-card" style="padding: 10px 12px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-bottom: 4px;">Project</div>
+          <div style="font-size: 12px; font-weight: 500;" class="truncate" data-drawer-lead="project">—</div>
+        </div>
+        <div class="surface-card" style="padding: 10px 12px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-bottom: 4px;">Budget</div>
+          <div style="font-size: 12px; font-weight: 500;" class="truncate" data-drawer-lead="budget">—</div>
+        </div>
+        <div class="surface-card" style="padding: 10px 12px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-bottom: 4px;">Source</div>
+          <div style="font-size: 12px; font-weight: 500;" class="truncate" data-drawer-lead="channel">—</div>
+        </div>
+        <div class="surface-card" style="padding: 10px 12px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-bottom: 4px;">Assigned</div>
+          <div style="font-size: 12px; font-weight: 500;" class="truncate" data-drawer-lead="agent">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Suggested Next Best Action -->
+    <section style="padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--violet); font-size: 12px;" aria-hidden="true"></i>
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted);">AI · Next Best Action</span>
+      </div>
+      <div id="drawer-nba" class="surface-card" style="padding: 12px 14px; font-size: 12px; color: var(--txt-secondary); line-height: 1.6;">
+        Analyze this lead to get the recommended next step.
+      </div>
+    </section>
+
+    <!-- Activity timeline -->
+    <section style="padding: 16px 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <span style="font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted);">Activity Timeline</span>
+        <button type="button" class="btn btn-ghost btn-sm" data-action="drawer-full-audit" style="font-size: 10px; color: var(--accent); padding: 0;">
+          Full Audit →
+        </button>
+      </div>
+      <div id="drawer-timeline" class="timeline">
+        <div style="text-align: center; padding: 32px 0; color: var(--txt-muted); font-size: 12px;">
+          Loading activity…
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Composer -->
+  <footer style="border-top: 1px solid var(--border-line); padding: 12px 20px; flex-shrink: 0; background: var(--bg-surface);">
+    <div style="display: flex; align-items: flex-end; gap: 8px;">
+      <textarea id="drawer-note-input" rows="1" placeholder="Add a note, log a call outcome…" class="field-input" style="min-height: 40px; height: 40px; padding: 10px 12px; resize: none;"></textarea>
+      <button type="button" class="btn btn-primary" data-action="drawer-add-note" title="Send (⌘↵)" style="flex-shrink: 0;">
+        <i class="fa-solid fa-paper-plane" style="font-size: 11px;" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: var(--txt-muted);">
+      <span><i class="fa-solid fa-user" style="font-size: 9px; margin-inline-end: 4px;" aria-hidden="true"></i><span data-current-user-name>—</span></span>
+      <span style="font-family: 'JetBrains Mono', monospace;">⌘↵ to send</span>
+    </div>
+  </footer>
+</aside>
+
+
+<!-- ================================================================
+     MODAL · LEAD FORM
+================================================================= -->
+<div class="modal-overlay" id="modal-lead-form" role="dialog" aria-modal="true" aria-labelledby="modal-lead-form-title">
+  <div class="modal-panel is-xwide">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-solid fa-user-plus" style="font-size: 12px;"></i>
+        </span>
+        <h2 id="modal-lead-form-title" style="font-size: 14px; font-weight: 700;" class="truncate">New Lead</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-lead-form" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid var(--border-line);">
+      <button type="button" data-tab="lead-form-basic" class="btn btn-ghost" style="height: 40px; border-radius: 0; border-bottom: 2px solid var(--accent); color: var(--accent); font-weight: 600;">Basic</button>
+      <button type="button" data-tab="lead-form-details" class="btn btn-ghost" style="height: 40px; border-radius: 0; border-bottom: 2px solid transparent;">Details</button>
+      <button type="button" data-tab="lead-form-followup" class="btn btn-ghost" style="height: 40px; border-radius: 0; border-bottom: 2px solid transparent;">Follow-Up</button>
+      <button type="button" data-tab="lead-form-rotation" class="btn btn-ghost" style="height: 40px; border-radius: 0; border-bottom: 2px solid transparent;">Assignment</button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+      <input type="hidden" id="lf-id" />
+
+      <div data-tab-panel="lead-form-basic" style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+        <div>
+          <label class="field-label" for="lf-name">Full Name <span style="color: var(--danger);">*</span></label>
+          <input id="lf-name" type="text" class="field-input" placeholder="e.g. Ahmed Hassan" autocomplete="off" />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label class="field-label" for="lf-phone">Phone</label>
+            <input id="lf-phone" type="tel" class="field-input" placeholder="+20 1xx xxx xxxx" autocomplete="off" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-email">Email</label>
+            <input id="lf-email" type="email" class="field-input" placeholder="email@example.com" autocomplete="off" />
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label class="field-label" for="lf-stage">Stage</label>
+            <select id="lf-stage" class="field-input"></select>
+          </div>
+          <div>
+            <label class="field-label" for="lf-priority">Priority</label>
+            <select id="lf-priority" class="field-input">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div data-tab-panel="lead-form-details" class="is-hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <label class="field-label" for="lf-channel">Channel / Source</label>
+          <select id="lf-channel" class="field-input"></select>
+        </div>
+        <div>
+          <label class="field-label" for="lf-project">Project</label>
+          <select id="lf-project" class="field-input"></select>
+        </div>
+        <div>
+          <label class="field-label" for="lf-budget">Budget (USD)</label>
+          <input id="lf-budget" type="number" min="0" step="1000" class="field-input" placeholder="250000" />
+        </div>
+        <div>
+          <label class="field-label" for="lf-location">Location</label>
+          <input id="lf-location" type="text" class="field-input" placeholder="e.g. New Cairo" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="lf-requirements">Requirements</label>
+          <textarea id="lf-requirements" class="field-input" placeholder="Bedrooms, size, floor, view…"></textarea>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="lf-note">Initial Note</label>
+          <textarea id="lf-note" class="field-input" placeholder="Optional first note…"></textarea>
+        </div>
+      </div>
+
+      <div data-tab-panel="lead-form-followup" class="is-hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <label class="field-label" for="lf-followup-date">Follow-Up Date</label>
+          <input id="lf-followup-date" type="date" class="field-input" />
+        </div>
+        <div>
+          <label class="field-label" for="lf-followup-time">Follow-Up Time</label>
+          <input id="lf-followup-time" type="time" class="field-input" value="10:00" />
+        </div>
+        <div>
+          <label class="field-label" for="lf-sla-hours">SLA Hours</label>
+          <input id="lf-sla-hours" type="number" min="1" max="168" class="field-input" value="24" />
+          <p style="font-size: 10px; color: var(--txt-muted); margin-top: 4px;">Hours before due → warning state</p>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="lf-followup-note">Follow-Up Note</label>
+          <input id="lf-followup-note" type="text" class="field-input" placeholder="What to discuss…" />
+        </div>
+      </div>
+
+      <div data-tab-panel="lead-form-rotation" class="is-hidden">
+        <div class="surface-card" style="padding: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <span style="font-size: 12px; font-weight: 600;">Auto-assign via Rotation</span>
+            <label class="switch">
+              <input type="checkbox" id="lf-auto-assign" checked />
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div id="lf-rotation-preview" style="font-size: 11px; color: var(--txt-muted); line-height: 1.6;">
+            The next eligible rep will be selected based on: shift status, uncontacted cap, and weighted distribution.
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <label class="field-label" for="lf-agent">Override — Assign Manually</label>
+          <select id="lf-agent" class="field-input"></select>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" data-modal-close="modal-lead-form">Cancel</button>
+      <button type="button" class="btn btn-primary" data-action="save-lead-form">
+        <i class="fa-solid fa-floppy-disk" style="font-size: 11px;" aria-hidden="true"></i>
+        Save Lead
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · USER FORM
+================================================================= -->
+<div class="modal-overlay" id="modal-user-form" role="dialog" aria-modal="true" aria-labelledby="modal-user-form-title">
+  <div class="modal-panel is-wide">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-solid fa-user-plus" style="font-size: 12px;"></i>
+        </span>
+        <h2 id="modal-user-form-title" style="font-size: 14px; font-weight: 700;">Add Team Member</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-user-form" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+      <input type="hidden" id="uf-id" />
+
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+        <div id="uf-avatar-preview" class="avatar avatar-xl" aria-hidden="true">?</div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">Profile Photo</div>
+          <div style="font-size: 11px; color: var(--txt-muted); margin-bottom: 8px;">JPG, PNG up to 2 MB — or use initials</div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-sm btn-secondary" data-action="uf-upload-avatar">
+              <i class="fa-solid fa-upload" style="font-size: 10px;" aria-hidden="true"></i> Upload
+            </button>
+            <button type="button" class="btn btn-sm btn-ghost" data-action="uf-clear-avatar">Remove</button>
+            <input type="file" id="uf-avatar-input" accept="image/png,image/jpeg" class="is-hidden" />
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="uf-name">Full Name <span style="color: var(--danger);">*</span></label>
+          <input id="uf-name" type="text" class="field-input" placeholder="e.g. Youssef Hassan" autocomplete="off" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="uf-email">Email <span style="color: var(--danger);">*</span></label>
+          <input id="uf-email" type="email" class="field-input" placeholder="name@company.com" autocomplete="off" />
+        </div>
+        <div>
+          <label class="field-label" for="uf-role">Base Role</label>
+          <select id="uf-role" class="field-input">
+            <option value="sales_rep">Sales Rep</option>
+            <option value="team_leader">Team Leader</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="uf-status">Status</label>
+          <select id="uf-status" class="field-input">
+            <option value="active">Active</option>
+            <option value="invited">Invited</option>
+            <option value="on_leave">On Leave</option>
+            <option value="offline">Offline</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="uf-shift">Shift</label>
+          <select id="uf-shift" class="field-input">
+            <option value="morning">Morning (9 AM – 5 PM)</option>
+            <option value="evening">Evening (1 PM – 9 PM)</option>
+            <option value="night">Night (9 PM – 5 AM)</option>
+            <option value="flexible">Flexible</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="uf-weight">Rotation Weight</label>
+          <input id="uf-weight" type="number" min="0" max="100" class="field-input" value="20" />
+          <p style="font-size: 10px; color: var(--txt-muted); margin-top: 4px;">Higher = more leads</p>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="uf-password">Temporary Password <span style="color: var(--danger);">*</span></label>
+          <div style="position: relative;">
+            <input id="uf-password" type="password" class="field-input" placeholder="Min 8 characters" autocomplete="new-password" style="padding-inline-end: 60px;" />
+            <button type="button" data-action="uf-toggle-password" style="position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: var(--accent); background: transparent; border: none; cursor: pointer; padding: 4px 8px;">Show</button>
+          </div>
+          <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 11px; color: var(--txt-secondary); cursor: pointer;">
+            <input type="checkbox" id="uf-send-invite" checked style="width: 14px; height: 14px;" />
+            Send welcome email with password reset link
+          </label>
+        </div>
+
+        <!-- Permissions override panel -->
+        <div style="grid-column: 1 / -1;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <label class="field-label" style="margin-bottom: 0;">Permission Overrides</label>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="uf-reset-permissions" style="color: var(--accent); font-size: 11px;">
+              Reset to role defaults
+            </button>
+          </div>
+          <div id="uf-permissions" class="surface-card" style="padding: 14px;">
+            <!-- Populated by JS: checklist of granular permissions -->
+          </div>
+        </div>
+
+        <div id="uf-errors" class="is-hidden" style="grid-column: 1 / -1; font-size: 11px; color: var(--danger);"></div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" id="uf-delete-btn" data-action="delete-user" style="color: var(--danger); display: none;">
+        <i class="fa-solid fa-trash" style="font-size: 10px;" aria-hidden="true"></i> Delete
+      </button>
+      <div style="display: flex; gap: 8px; margin-inline-start: auto;">
+        <button type="button" class="btn btn-ghost" data-modal-close="modal-user-form">Cancel</button>
+        <button type="button" class="btn btn-primary" data-action="save-user-form">
+          <i class="fa-solid fa-floppy-disk" style="font-size: 11px;" aria-hidden="true"></i>
+          Save User
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · TENANT FORM (Super-Admin only)
+================================================================= -->
+<div class="modal-overlay" id="modal-tenant-form" role="dialog" aria-modal="true" aria-labelledby="modal-tenant-form-title">
+  <div class="modal-panel is-wide">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-solid fa-building" style="font-size: 12px;"></i>
+        </span>
+        <h2 id="modal-tenant-form-title" style="font-size: 14px; font-weight: 700;">New Tenant</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-tenant-form" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+      <input type="hidden" id="tf-id" />
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="tf-name">Company Name <span style="color: var(--danger);">*</span></label>
+          <input id="tf-name" type="text" class="field-input" placeholder="e.g. Octane Realty" autocomplete="off" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="tf-domain">Workspace Slug <span style="color: var(--danger);">*</span></label>
+          <input id="tf-domain" type="text" class="field-input" placeholder="octane-realty" autocomplete="off" />
+          <p style="font-size: 10px; color: var(--txt-muted); margin-top: 4px;">Used in URLs and email — lowercase, alphanumeric, hyphens</p>
+        </div>
+        <div>
+          <label class="field-label" for="tf-tier">Subscription Tier</label>
+          <select id="tf-tier" class="field-input">
+            <option value="starter">Starter</option>
+            <option value="pro">Pro</option>
+            <option value="enterprise" selected>Enterprise</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="tf-status">Status</label>
+          <select id="tf-status" class="field-input">
+            <option value="active" selected>Active</option>
+            <option value="trial">Trial</option>
+            <option value="suspended">Suspended</option>
+            <option value="past_due">Past Due</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="tf-seats">Seats</label>
+          <input id="tf-seats" type="number" min="1" value="10" class="field-input" />
+        </div>
+        <div>
+          <label class="field-label" for="tf-mrr">Monthly Price (USD)</label>
+          <input id="tf-mrr" type="number" min="0" step="10" value="299" class="field-input" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="tf-admin-name">Primary Admin Name</label>
+          <input id="tf-admin-name" type="text" class="field-input" placeholder="Owner name" autocomplete="off" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label" for="tf-admin-email">Primary Admin Email</label>
+          <input id="tf-admin-email" type="email" class="field-input" placeholder="owner@company.com" autocomplete="off" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label">Feature Flags (Tier Overrides)</label>
+          <div id="tf-features" class="surface-card" style="padding: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div id="tf-errors" class="is-hidden" style="grid-column: 1 / -1; font-size: 11px; color: var(--danger);"></div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" id="tf-delete-btn" data-action="delete-tenant" style="color: var(--danger); display: none;">
+        <i class="fa-solid fa-trash" style="font-size: 10px;" aria-hidden="true"></i> Delete Tenant
+      </button>
+      <div style="display: flex; gap: 8px; margin-inline-start: auto;">
+        <button type="button" class="btn btn-ghost" data-modal-close="modal-tenant-form">Cancel</button>
+        <button type="button" class="btn btn-primary" data-action="save-tenant-form">
+          <i class="fa-solid fa-floppy-disk" style="font-size: 11px;" aria-hidden="true"></i>
+          Save Tenant
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · WHATSAPP COMPOSER
+================================================================= -->
+<div class="modal-overlay" id="modal-whatsapp" role="dialog" aria-modal="true" aria-labelledby="modal-whatsapp-title">
+  <div class="modal-panel">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: rgba(37,211,102,.14); color: #25d366; display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-brands fa-whatsapp" style="font-size: 14px;"></i>
+        </span>
+        <h2 id="modal-whatsapp-title" style="font-size: 14px; font-weight: 700;">Send WhatsApp</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-whatsapp" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+      <div style="margin-bottom: 16px;">
+        <label class="field-label" for="wa-phone">Phone Number</label>
+        <input id="wa-phone" type="tel" class="field-input" placeholder="+201xxxxxxxxx" autocomplete="off" />
+      </div>
+      <div style="margin-bottom: 16px;">
+        <label class="field-label" for="wa-template-select">Template</label>
+        <select id="wa-template-select" class="field-input">
+          <option value="">— Select —</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="wa-message">Message</label>
+        <textarea id="wa-message" class="field-input" style="min-height: 160px;"></textarea>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" data-modal-close="modal-whatsapp">Cancel</button>
+      <button type="button" class="btn" data-action="send-whatsapp" style="background: rgba(37,211,102,.14); color: #25d366; border: 1px solid rgba(37,211,102,.3);">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+        Open WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · IMPORT
+================================================================= -->
+<div class="modal-overlay" id="modal-import" role="dialog" aria-modal="true" aria-labelledby="modal-import-title">
+  <div class="modal-panel">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: var(--info-soft); color: var(--info); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-solid fa-file-import" style="font-size: 12px;"></i>
+        </span>
+        <h2 id="modal-import-title" style="font-size: 14px; font-weight: 700;">Import Data</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-import" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 20px;">
+      <div id="import-drop-zone" data-action="open-import-picker" style="border: 2px dashed var(--border-line); border-radius: 12px; padding: 48px 16px; text-align: center; cursor: pointer; transition: all .2s;">
+        <div style="font-size: 40px; margin-bottom: 12px; opacity: .6;" aria-hidden="true">📂</div>
+        <p style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Drop your JSON backup here</p>
+        <p style="font-size: 11px; color: var(--txt-muted);">or click to browse</p>
+        <input type="file" id="import-file-input" accept=".json,application/json" class="is-hidden" />
+      </div>
+      <div id="import-validation" style="margin-top: 16px;"></div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" data-modal-close="modal-import">Cancel</button>
+      <button type="button" id="btn-modal-import-confirm" class="btn btn-primary" data-action="confirm-import" disabled>
+        <i class="fa-solid fa-check" style="font-size: 11px;" aria-hidden="true"></i>
+        Import
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · CHECK-IN / CHECK-OUT (Field force)
+================================================================= -->
+<div class="modal-overlay" id="modal-checkin" role="dialog" aria-modal="true" aria-labelledby="modal-checkin-title">
+  <div class="modal-panel">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: var(--ok-soft); color: var(--ok); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-solid fa-location-dot" style="font-size: 12px;"></i>
+        </span>
+        <h2 id="modal-checkin-title" style="font-size: 14px; font-weight: 700;">Check In / Out</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-checkin" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="padding: 20px;">
+      <div id="checkin-status" class="surface-card" style="padding: 14px; margin-bottom: 16px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-muted); margin-bottom: 4px;">Current Status</div>
+        <div id="checkin-current" style="font-size: 16px; font-weight: 700; color: var(--txt-secondary);">— Not checked in</div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label class="field-label" for="checkin-notes">Notes (optional)</label>
+        <textarea id="checkin-notes" class="field-input" placeholder="e.g. Field visit — Palm Hills"></textarea>
+      </div>
+
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--txt-secondary); cursor: pointer; margin-bottom: 16px;">
+        <input type="checkbox" id="checkin-gps" checked style="width: 14px; height: 14px;" />
+        Include GPS location
+      </label>
+
+      <div id="checkin-geo" style="font-size: 11px; color: var(--txt-muted); margin-bottom: 16px;">—</div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" data-modal-close="modal-checkin">Close</button>
+      <button type="button" class="btn btn-danger" data-action="do-checkout">Check Out</button>
+      <button type="button" class="btn btn-ok" data-action="do-checkin">
+        <i class="fa-solid fa-location-dot" style="font-size: 10px;" aria-hidden="true"></i>
+        Check In
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · DISCOUNT APPROVAL REQUEST
+================================================================= -->
+<div class="modal-overlay" id="modal-discount" role="dialog" aria-modal="true" aria-labelledby="modal-discount-title">
+  <div class="modal-panel">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-line);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="width: 32px; height: 32px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); display: flex; align-items: center; justify-content: center;" aria-hidden="true">
+          <i class="fa-solid fa-percent" style="font-size: 12px;"></i>
+        </span>
+        <h2 id="modal-discount-title" style="font-size: 14px; font-weight: 700;">Request Discount Approval</h2>
+      </div>
+      <button type="button" class="icon-btn" data-modal-close="modal-discount" aria-label="Close">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div style="padding: 20px;">
+      <input type="hidden" id="disc-lead-id" />
+      <div style="display: grid; gap: 16px;">
+        <div>
+          <label class="field-label" for="disc-percent">Discount %</label>
+          <input id="disc-percent" type="number" min="0" max="50" step="0.5" class="field-input" value="5" />
+        </div>
+        <div>
+          <label class="field-label" for="disc-reason">Justification</label>
+          <textarea id="disc-reason" class="field-input" placeholder="Competitive pressure, bulk purchase, etc."></textarea>
+        </div>
+        <div>
+          <label class="field-label" for="disc-approver">Route to</label>
+          <select id="disc-approver" class="field-input">
+            <option value="">Auto (Team Leader)</option>
+            <!-- Populated by JS with team leaders -->
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border-line);">
+      <button type="button" class="btn btn-ghost" data-modal-close="modal-discount">Cancel</button>
+      <button type="button" class="btn btn-primary" data-action="submit-discount-request">
+        <i class="fa-solid fa-paper-plane" style="font-size: 11px;" aria-hidden="true"></i>
+        Submit Request
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MODAL · CONFIRM
+================================================================= -->
+<div class="modal-overlay" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+  <div class="modal-panel" style="max-width: 420px;">
+    <div style="padding: 24px 24px 16px; text-align: center;">
+      <div id="confirm-icon" style="font-size: 32px; margin-bottom: 12px;" aria-hidden="true">⚠️</div>
+      <h2 id="modal-confirm-title" style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">Are you sure?</h2>
+      <p id="confirm-message" style="font-size: 13px; color: var(--txt-secondary); line-height: 1.5;">This action cannot be undone.</p>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px 24px;">
+      <button type="button" id="confirm-cancel" class="btn btn-secondary">Cancel</button>
+      <button type="button" id="confirm-ok" class="btn btn-danger">Confirm</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     TOASTS
+================================================================= -->
+<div id="toast-host" aria-live="polite" aria-atomic="false"></div>
+
+<!-- App entry -->
+<script src="app.js" defer></script>
+</body>
+</html>

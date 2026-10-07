@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0b10" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Youssef Sales CRM v8 — Enterprise Real Estate SaaS" />
+  <title>Youssef Sales CRM · v8 Enterprise</title>
+
+  <!-- ============================================================
+       FONTS — Inter (Linear/Stripe-grade)
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ============================================================
+       FontAwesome 6 (Solid + Regular + Brands)
+  ============================================================ -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- ============================================================
+       Chart.js 4 (UMD build — exposes window.Chart)
+  ============================================================ -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+    crossorigin="anonymous"
+    defer
+  ></script>
+
+  <!-- ============================================================
+       TailwindCSS (JIT via CDN) + Design Tokens
+  ============================================================ -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script>
+    /* ------------------------------------------------------------------
+       Tailwind theme — mirrors the V8 dark design tokens.
+       Extends the default palette so utility classes (bg-surface,
+       text-secondary, border-strong…) map to our semantic scale.
+    ------------------------------------------------------------------ */
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            /* Surfaces */
+            base:     '#0a0b10',
+            surface:  '#12141c',
+            elevated: '#181b25',
+            hover:    '#1f2330',
+            input:    '#0f1118',
+
+            /* Borders */
+            line: {
+              DEFAULT: 'rgba(255,255,255,0.06)',
+              strong:  'rgba(255,255,255,0.12)',
+              focus:   'rgba(109,140,255,0.55)',
+            },
+
+            /* Text */
+            txt: {
+              primary:   '#e8eaf0',
+              secondary: '#8a91a6',
+              muted:     '#5a6178',
+              dim:       '#3d4358',
+            },
+
+            /* Brand + Accents */
+            accent: {
+              DEFAULT: '#6d8cff',
+              hover:   '#5b7cff',
+              soft:    'rgba(109,140,255,0.14)',
+            },
+            violet: { DEFAULT: '#8f6dff', soft: 'rgba(143,109,255,0.14)' },
+            danger: { DEFAULT: '#ff5d5d', soft: 'rgba(255,93,93,0.12)' },
+            warn:   { DEFAULT: '#ffb648', soft: 'rgba(255,182,72,0.12)' },
+            ok:     { DEFAULT: '#4ade80', soft: 'rgba(74,222,128,0.12)' },
+            info:   { DEFAULT: '#5fc9e8', soft: 'rgba(95,201,232,0.12)' },
+
+            /* Stage palette (pipeline) */
+            stage: {
+              new:       '#06b6d4',
+              contacted: '#4f8ef7',
+              meeting:   '#a855f7',
+              proposal:  '#f59e0b',
+              neg:       '#f97316',
+              won:       '#22c55e',
+              lost:      '#ef4444',
+            },
+          },
+          borderRadius: {
+            xs:  '6px',
+            sm:  '8px',
+            md:  '10px',
+            lg:  '12px',
+            xl:  '16px',
+            '2xl': '20px',
+          },
+          boxShadow: {
+            card:  '0 1px 0 rgba(255,255,255,0.03) inset, 0 1px 2px rgba(0,0,0,0.4)',
+            pop:   '0 12px 40px -8px rgba(0,0,0,0.65), 0 4px 12px rgba(0,0,0,0.4)',
+            modal: '0 32px 80px -16px rgba(0,0,0,0.75)',
+            glow:  '0 0 0 3px rgba(109,140,255,0.18)',
+          },
+          keyframes: {
+            pulseSoft: {
+              '0%,100%': { opacity: 1 },
+              '50%':     { opacity: .45 },
+            },
+            fadeIn: {
+              '0%':   { opacity: 0, transform: 'translateY(6px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
+            slideUp: {
+              '0%':   { opacity: 0, transform: 'translateY(12px) scale(.98)' },
+              '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+            },
+            slideInRight: {
+              '0%':   { opacity: 0, transform: 'translateX(24px)' },
+              '100%': { opacity: 1, transform: 'translateX(0)' },
+            },
+            ringPulse: {
+              '0%':   { boxShadow: '0 0 0 0 rgba(74,222,128,0.55)' },
+              '70%':  { boxShadow: '0 0 0 10px rgba(74,222,128,0)' },
+              '100%': { boxShadow: '0 0 0 0 rgba(74,222,128,0)' },
+            },
+            spinSlow: { to: { transform: 'rotate(360deg)' } },
+          },
+          animation: {
+            pulseSoft:    'pulseSoft 2s ease-in-out infinite',
+            fadeIn:       'fadeIn .22s ease-out both',
+            slideUp:      'slideUp .24s cubic-bezier(.2,.9,.3,1.2) both',
+            slideInRight: 'slideInRight .28s cubic-bezier(.2,.9,.3,1.1) both',
+            ringPulse:    'ringPulse 2s infinite',
+            spinSlow:     'spinSlow 1.4s linear infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- ============================================================
+       Global CSS — resets, scrollbars, custom primitives
+  ============================================================ -->
+  <style>
+    /* ---------------- Root & Reset ---------------- */
+    :root {
+      color-scheme: dark;
+      --sidebar-w: 260px;
+      --header-h:  64px;
+      --scrollbar-thumb: rgba(255,255,255,0.08);
+      --scrollbar-thumb-hover: rgba(255,255,255,0.16);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0b10;
+      color: #e8eaf0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-feature-settings: 'cv02','cv03','cv04','cv11';
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    body { font-size: 14px; line-height: 1.5; }
+
+    /* ---------------- Scrollbars ---------------- */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); background-clip: padding-box; }
+    * { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+
+    /* ---------------- Focus visibility ---------------- */
+    :focus-visible {
+      outline: 2px solid rgba(109,140,255,0.75);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* ---------------- Selection ---------------- */
+    ::selection { background: rgba(109,140,255,0.35); color: #fff; }
+
+    /* ---------------- App Grid ---------------- */
+    #app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+    @media (max-width: 1024px) {
+      #app-shell { grid-template-columns: 0 1fr; }
+    }
+
+    /* ---------------- Sidebar primitives ---------------- */
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: #8a91a6;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color .15s ease, background-color .15s ease;
+      user-select: none;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+    .nav-item:hover {
+      color: #e8eaf0;
+      background: rgba(255,255,255,0.04);
+    }
+    .nav-item[aria-current="page"],
+    .nav-item.is-active {
+      color: #e8eaf0;
+      background: rgba(109,140,255,0.10);
+    }
+    .nav-item[aria-current="page"]::before,
+    .nav-item.is-active::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: #6d8cff;
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: inherit;
+      flex-shrink: 0;
+    }
+    .nav-item .nav-label { flex: 1; min-width: 0; }
+    .nav-item .nav-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(255,93,93,0.14);
+      color: #ff5d5d;
+      border: 1px solid rgba(255,93,93,0.22);
+    }
+    .nav-item .nav-kbd {
+      font-size: 10px;
+      font-weight: 600;
+      color: #5a6178;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .nav-section-label {
+      padding: 14px 12px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #3d4358;
+      user-select: none;
+    }
+
+    /* ---------------- Header primitives ---------------- */
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #8a91a6;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .15s ease;
+      font-family: inherit;
+    }
+    .icon-btn:hover {
+      color: #e8eaf0;
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.06);
+    }
+
+    .kpi-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 11px;
+      font-weight: 500;
+      color: #8a91a6;
+      white-space: nowrap;
+    }
+    .kpi-chip strong {
+      color: #e8eaf0;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-chip.kpi-danger strong { color: #ff5d5d; }
+    .kpi-chip.kpi-ok     strong { color: #4ade80; }
+    .kpi-chip.kpi-warn   strong { color: #ffb648; }
+
+    /* ---------------- Main Content View ---------------- */
+    #main-content-view {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 24px 32px 48px;
+      scroll-behavior: smooth;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(109,140,255,0.05), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(143,109,255,0.04), transparent 55%),
+        #0a0b10;
+    }
+    @media (max-width: 768px) {
+      #main-content-view { padding: 16px 16px 40px; }
+    }
+
+    /* View transition container — module render targets mount here */
+    .view-container {
+      animation: fadeIn .22s ease-out both;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ---------------- Modal / Overlay shells ---------------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(5,6,10,0.72);
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+    .modal-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-panel {
+      background: #12141c;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      box-shadow: 0 32px 80px -16px rgba(0,0,0,0.75);
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(8px) scale(.98);
+      transition: transform .24s cubic-bezier(.2,.9,.3,1.1);
+    }
+    .modal-overlay.is-open .modal-panel { transform: translateY(0) scale(1); }
+
+    /* ---------------- Toast ---------------- */
+    #toast-host {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 10px;
+      pointer-events: none;
+      max-width: min(420px, calc(100vw - 32px));
+    }
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #181b25;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 3px solid #6d8cff;
+      border-radius: 10px;
+      box-shadow: 0 12px 40px -8px rgba(0,0,0,0.65);
+      font-size: 13px;
+      color: #e8eaf0;
+      animation: slideInRight .28s cubic-bezier(.2,.9,.3,1.1) both;
+    }
+    .toast.toast-success { border-left-color: #4ade80; }
+    .toast.toast-error   { border-left-color: #ff5d5d; }
+    .toast.toast-warning { border-left-color: #ffb648; }
+    .toast.toast-info    { border-left-color: #6d8cff; }
+
+    /* ---------------- Loading splash ---------------- */
+    #app-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: #0a0b10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+    }
+    #app-loading .brand-mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6d8cff, #8f6dff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 24px;
+      color: #fff;
+      box-shadow: 0 12px 40px -8px rgba(109,140,255,0.5);
+    }
+    #app-loading .spin {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-top-color: #6d8cff;
+      animation: spinSlow .9s linear infinite;
+    }
+
+    /* ---------------- Utility: hidden-by-default ---------------- */
+    .is-hidden { display: none !important; }
+
+    /* ---------------- Density helper ---------------- */
+    .surface-card {
+      background: #12141c;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       LOADING SPLASH
+  ============================================================ -->
+  <div id="app-loading" role="status" aria-live="polite">
+    <div class="brand-mark" aria-hidden="true">Y</div>
+    <div class="spin" aria-hidden="true"></div>
+    <p class="text-txt-muted text-xs tracking-widest uppercase">
+      Initializing&nbsp;CRM&nbsp;·&nbsp;v8
+    </p>
+  </div>
+
+  <!-- ============================================================
+       APP SHELL
+  ============================================================ -->
+  <div id="app-shell" class="is-hidden">
+
+    <!-- ==========================================================
+         SIDEBAR — Single Left Rail
+    ========================================================== -->
+    <aside
+      id="app-sidebar"
+      class="bg-surface border-r border-line flex flex-col min-h-0"
+      aria-label="Primary navigation"
+    >
+      <!-- Brand -->
+      <div class="px-5 pt-5 pb-4 flex items-center gap-3 border-b border-line">
+        <div
+          class="w-9 h-9 rounded-lg flex items-center justify-center font-extrabold text-white text-sm shrink-0"
+          style="background: linear-gradient(135deg,#6d8cff,#8f6dff); box-shadow: 0 6px 20px -6px rgba(109,140,255,.55);"
+          aria-hidden="true"
+        >Y</div>
+        <div class="min-w-0">
+          <div class="text-txt-primary font-semibold text-[13px] leading-tight truncate">
+            Youssef CRM
+          </div>
+          <div class="text-txt-muted text-[10px] font-medium tracking-widest uppercase">
+            v8 · Enterprise
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto px-3 py-2 min-h-0" aria-label="Modules">
+
+        <div class="nav-section-label">Operations</div>
+
+        <button type="button" class="nav-item" data-view="action-center">
+          <i class="fa-solid fa-bolt nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Action Center</span>
+          <span class="nav-badge" data-badge="sla-critical">0</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="sales-pipeline">
+          <i class="fa-solid fa-diagram-project nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Sales Pipeline</span>
+          <span class="nav-kbd">⌘1</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="property-inventory">
+          <i class="fa-solid fa-building-columns nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Property Inventory</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="cil-radar">
+          <i class="fa-solid fa-satellite-dish nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">CIL Radar</span>
+          <span class="nav-kbd">⌘2</span>
+        </button>
+
+        <div class="nav-section-label">Revenue</div>
+
+        <button type="button" class="nav-item" data-view="financial-engine">
+          <i class="fa-solid fa-chart-line nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Financial Engine</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="ai-voice-simulator">
+          <i class="fa-solid fa-microphone-lines nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">AI Voice Simulator</span>
+          <span class="nav-kbd">Beta</span>
+        </button>
+
+        <div class="nav-section-label">System</div>
+
+        <button type="button" class="nav-item" data-view="analytics">
+          <i class="fa-solid fa-chart-pie nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Analytics</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="settings">
+          <i class="fa-solid fa-gear nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Settings</span>
+          <span class="nav-kbd">⌘,</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="border-t border-line p-3 flex items-center gap-2 shrink-0">
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+          style="background: linear-gradient(135deg,#6d8cff,#8f6dff);"
+          aria-hidden="true"
+        >Y</div>
+        <div class="min-w-0 flex-1">
+          <div
+            class="text-txt-primary text-[12px] font-semibold truncate"
+            data-current-user
+          >Youssef</div>
+          <div class="text-txt-muted text-[10px] truncate">Sales Director</div>
+        </div>
+        <button
+          type="button"
+          class="icon-btn"
+          data-view="settings"
+          aria-label="Open settings"
+          title="Settings"
+        >
+          <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==========================================================
+         MAIN COLUMN
+    ========================================================== -->
+    <div class="flex flex-col min-h-0 min-w-0">
+
+      <!-- ========================================================
+           HEADER — SLA Status · KPIs · Command Bar
+      ======================================================== -->
+      <header
+        id="app-header"
+        class="shrink-0 h-16 px-6 flex items-center gap-4 border-b border-line bg-base/85 backdrop-blur-xl z-30"
+        style="background-color: rgba(10,11,16,0.85);"
+        role="banner"
+      >
+        <!-- Left: View Title -->
+        <div class="min-w-0 shrink-0">
+          <h1
+            id="view-title"
+            class="text-txt-primary text-[15px] font-semibold leading-tight truncate"
+          >Action Center</h1>
+          <p
+            id="view-subtitle"
+            class="text-txt-muted text-[11px] leading-tight truncate"
+          >Real-time SLA monitoring</p>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block w-px h-6 bg-line-strong shrink-0" aria-hidden="true"></div>
+
+        <!-- Center: Command Bar -->
+        <div class="hidden md:flex flex-1 min-w-0 max-w-lg">
+          <label
+            class="relative flex-1 min-w-0"
+            aria-label="Global search"
+          >
+            <i
+              class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-txt-muted text-[12px] pointer-events-none"
+              aria-hidden="true"
+            ></i>
+            <input
+              id="global-search"
+              type="search"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search leads, projects, phone…"
+              class="w-full h-9 pl-9 pr-16 text-[13px] rounded-lg bg-input border border-line text-txt-primary placeholder:text-txt-muted focus:border-line-focus focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
+            />
+            <kbd
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono font-semibold text-txt-muted bg-white/[0.04] border border-line rounded px-1.5 py-0.5 pointer-events-none"
+            >⌘K</kbd>
+          </label>
+        </div>
+
+        <!-- Right: SLA Status · KPI Chips · Actions -->
+        <div class="flex items-center gap-2 shrink-0 ml-auto">
+
+          <!-- Sync / Live indicator -->
+          <div
+            class="hidden lg:flex items-center gap-2 px-2.5 h-8 rounded-lg bg-white/[0.03] border border-line"
+            title="Cross-tab sync status"
+          >
+            <span
+              id="sync-dot"
+              class="w-2 h-2 rounded-full bg-ok animate-ringPulse"
+              aria-hidden="true"
+            ></span>
+            <span
+              id="sync-label"
+              class="text-txt-secondary text-[11px] font-medium"
+            >Live</span>
+          </div>
+
+          <!-- KPI Chips -->
+          <div class="hidden xl:flex items-center gap-1.5" aria-label="Quick KPIs">
+            <div class="kpi-chip" title="Total active pipeline value">
+              <i class="fa-solid fa-sack-dollar text-txt-muted text-[10px]" aria-hidden="true"></i>
+              <span>Pipeline</span>
+              <strong id="hdr-kpi-pipeline">$0</strong>
+            </div>
+            <div class="kpi-chip kpi-danger" title="Overdue follow-ups">
+              <i class="fa-solid fa-triangle-exclamation text-[10px]" aria-hidden="true"></i>
+              <span>Overdue</span>
+              <strong id="hdr-kpi-overdue">0</strong>
+            </div>
+            <div class="kpi-chip kpi-ok" title="Close rate">
+              <i class="fa-solid fa-trophy text-[10px]" aria-hidden="true"></i>
+              <span>Win&nbsp;Rate</span>
+              <strong id="hdr-kpi-winrate">0%</strong>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="hidden lg:block w-px h-6 bg-line-strong" aria-hidden="true"></div>
+
+          <!-- Quick Actions -->
+          <button
+            type="button"
+            id="btn-quick-add-lead"
+            class="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-semibold text-white border border-accent/40 transition-all hover:brightness-110 active:scale-[.98]"
+            style="background: linear-gradient(135deg,#6d8cff,#5b7cff); box-shadow: 0 6px 20px -8px rgba(109,140,255,.7);"
+            title="Add lead (⌘N)"
+          >
+            <i class="fa-solid fa-plus text-[11px]" aria-hidden="true"></i>
+            <span>New Lead</span>
+          </button>
+
+          <button
+            type="button"
+            id="btn-notifications"
+            class="icon-btn relative"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <i class="fa-regular fa-bell" aria-hidden="true"></i>
+            <span
+              id="notification-dot"
+              class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger is-hidden"
+              aria-hidden="true"
+            ></span>
+          </button>
+
+          <button
+            type="button"
+            id="btn-help"
+            class="icon-btn"
+            aria-label="Help"
+            title="Help & shortcuts"
+          >
+            <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- ========================================================
+           MAIN CONTENT VIEW
+           Every module renders INSIDE this element.
+      ======================================================== -->
+      <main
+        id="main-content-view"
+        role="main"
+        aria-live="polite"
+        aria-busy="false"
+      >
+        <!--
+          Module mount contract:
+          ─ Each module renders a single root <section class="view-container" data-view-root="...">
+          ─ Modules MUST be idempotent: calling render() twice replaces cleanly.
+          ─ Modules MUST NOT bind listeners globally; delegation only via #main-content-view.
+        -->
+      </main>
+
+    </div><!-- /main column -->
+  </div><!-- /#app-shell -->
+
+  <!-- ============================================================
+       MODAL HOSTS
+       All modal overlays live at the document root so they escape
+       the header's backdrop-filter stacking context.
+  ============================================================ -->
+
+  <!-- Generic Lead Form (Add / Edit) -->
+  <div class="modal-overlay" id="modal-lead-form" role="dialog" aria-modal="true" aria-labelledby="modal-lead-form-title">
+    <div class="modal-panel" style="max-width: 720px;">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center text-accent shrink-0" aria-hidden="true">
+            <i class="fa-solid fa-user-plus text-[13px]"></i>
+          </span>
+          <h2 id="modal-lead-form-title" class="text-txt-primary text-[14px] font-semibold truncate">New Lead</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-lead-form" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5" data-modal-body="lead-form">
+        <!-- JS module renders form fields here -->
+      </div>
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="h-9 px-4 rounded-lg text-[13px] font-medium text-txt-secondary bg-white/[0.04] border border-line hover:bg-white/[0.08] hover:text-txt-primary transition-colors" data-modal-close="modal-lead-form">
+          Cancel
+        </button>
+        <button type="button" id="btn-modal-lead-save" class="h-9 px-4 rounded-lg text-[13px] font-semibold text-white border border-accent/40 transition-all hover:brightness-110 active:scale-[.98]" style="background: linear-gradient(135deg,#6d8cff,#5b7cff);">
+          <i class="fa-solid fa-floppy-disk mr-1.5 text-[11px]" aria-hidden="true"></i>Save Lead
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Center (full-bleed, module-driven) -->
+  <div class="modal-overlay" id="modal-action-center" role="dialog" aria-modal="true" aria-labelledby="modal-action-center-title">
+    <div class="modal-panel" style="max-width: 1180px; height: 90vh;">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center text-accent shrink-0" aria-hidden="true">
+            <i class="fa-solid fa-bolt text-[13px]"></i>
+          </span>
+          <h2 id="modal-action-center-title" class="text-txt-primary text-[14px] font-semibold truncate">Action Center</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="ac-edit-btn" class="h-8 px-3 rounded-lg text-[12px] font-medium text-txt-secondary bg-white/[0.04] border border-line hover:bg-white/[0.08] hover:text-txt-primary transition-colors">
+            <i class="fa-solid fa-pen mr-1.5 text-[10px]" aria-hidden="true"></i>Edit
+          </button>
+          <button type="button" id="ac-delete-btn" class="h-8 px-3 rounded-lg text-[12px] font-medium text-danger bg-danger-soft border border-danger/25 hover:bg-danger/20 transition-colors">
+            <i class="fa-solid fa-trash mr-1.5 text-[10px]" aria-hidden="true"></i>Delete
+          </button>
+          <button type="button" class="icon-btn" data-modal-close="modal-action-center" aria-label="Close">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex-1 min-h-0 overflow-hidden" data-modal-body="action-center">
+        <!-- JS module renders the full AC layout here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Data -->
+  <div class="modal-overlay" id="modal-import" role="dialog" aria-modal="true" aria-labelledby="modal-import-title">
+    <div class="modal-panel">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-info-soft flex items-center justify-center text-info" aria-hidden="true">
+            <i class="fa-solid fa-file-import text-[13px]"></i>
+          </span>
+          <h2 id="modal-import-title" class="text-txt-primary text-[14px] font-semibold">Import Data</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-import" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5" data-modal-body="import">
+        <!-- JS module renders dropzone + validation here -->
+      </div>
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="h-9 px-4 rounded-lg text-[13px] font-medium text-txt-secondary bg-white/[0.04] border border-line hover:bg-white/[0.08] hover:text-txt-primary transition-colors" data-modal-close="modal-import">
+          Cancel
+        </button>
+        <button type="button" id="btn-modal-import-confirm" class="h-9 px-4 rounded-lg text-[13px] font-semibold text-white border border-accent/40 transition-all hover:brightness-110 active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed" style="background: linear-gradient(135deg,#6d8cff,#5b7cff);" disabled>
+          <i class="fa-solid fa-check mr-1.5 text-[11px]" aria-hidden="true"></i>Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp Composer -->
+  <div class="modal-overlay" id="modal-whatsapp" role="dialog" aria-modal="true" aria-labelledby="modal-whatsapp-title">
+    <div class="modal-panel" style="max-width: 620px;">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: rgba(37,211,102,0.14); color: #25d366;" aria-hidden="true">
+            <i class="fa-brands fa-whatsapp text-[14px]"></i>
+          </span>
+          <h2 id="modal-whatsapp-title" class="text-txt-primary text-[14px] font-semibold">Send WhatsApp</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-whatsapp" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5" data-modal-body="whatsapp">
+        <!-- JS module renders phone + template + body -->
+      </div>
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="h-9 px-4 rounded-lg text-[13px] font-medium text-txt-secondary bg-white/[0.04] border border-line hover:bg-white/[0.08] hover:text-txt-primary transition-colors" data-modal-close="modal-whatsapp">
+          Cancel
+        </button>
+        <button type="button" id="btn-modal-wa-send" class="h-9 px-4 rounded-lg text-[13px] font-semibold transition-all hover:brightness-110 active:scale-[.98]" style="background: rgba(37,211,102,0.16); color:#25d366; border:1px solid rgba(37,211,102,0.3);">
+          <i class="fa-brands fa-whatsapp mr-1.5" aria-hidden="true"></i>Open WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Dialog (single reusable instance) -->
+  <div class="modal-overlay" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+    <div class="modal-panel" style="max-width: 420px;">
+      <div class="px-6 pt-6 pb-4 text-center">
+        <div id="confirm-icon" class="text-3xl mb-3" aria-hidden="true">⚠️</div>
+        <h2 id="modal-confirm-title" class="text-txt-primary text-[15px] font-semibold mb-1.5">Are you sure?</h2>
+        <p id="confirm-message" class="text-txt-secondary text-[13px] leading-relaxed">This action cannot be undone.</p>
+      </div>
+      <div class="flex items-center justify-center gap-2 px-6 pb-6">
+        <button type="button" id="confirm-cancel" class="h-9 px-5 rounded-lg text-[13px] font-medium text-txt-secondary bg-white/[0.04] border border-line hover:bg-white/[0.08] hover:text-txt-primary transition-colors">
+          Cancel
+        </button>
+        <button type="button" id="confirm-ok" class="h-9 px-5 rounded-lg text-[13px] font-semibold text-white bg-danger border border-danger/50 hover:brightness-110 transition-all">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       GLOBAL HOSTS
+  ============================================================ -->
+
+  <!-- Toast Stack -->
+  <div id="toast-host" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Chart.js tooltip portal (module-driven) -->
+  <div id="chart-tooltip-host" class="is-hidden"></div>
+
+  <!-- ============================================================
+       APP SCRIPT
+  ============================================================ -->
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Youssef Sales CRM v3.0</title>
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES & RESET
+    ============================================================ */
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #1a1d2e;
+      --bg-card: #1e2235;
+      --bg-card-hover: #252840;
+      --bg-input: #12151f;
+      --bg-modal: #161927;
+      --accent-blue: #4f8ef7;
+      --accent-blue-dark: #3a6fd8;
+      --accent-green: #22c55e;
+      --accent-yellow: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #a855f7;
+      --accent-cyan: #06b6d4;
+      --accent-orange: #f97316;
+      --text-primary: #e8eaf0;
+      --text-secondary: #8b92a9;
+      --text-muted: #5a6178;
+      --border-color: #2a2f45;
+      --border-focus: #4f8ef7;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
+      --shadow-xl: 0 16px 64px rgba(0,0,0,0.7);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+      --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --transition-fast: 0.15s ease;
+      --transition-med: 0.25s ease;
+      --transition-slow: 0.4s ease;
+      --stage-new: #06b6d4;
+      --stage-contacted: #4f8ef7;
+      --stage-meeting: #a855f7;
+      --stage-proposal: #f59e0b;
+      --stage-negotiation: #f97316;
+      --stage-won: #22c55e;
+      --stage-lost: #ef4444;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ============================================================
+       TYPOGRAPHY
+    ============================================================ */
+    h1, h2, h3, h4, h5 { font-weight: 600; line-height: 1.3; }
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.375rem; }
+    h3 { font-size: 1.125rem; }
+    h4 { font-size: 0.9375rem; }
+    h5 { font-size: 0.8125rem; }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    #app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       TOPBAR / HEADER
+    ============================================================ */
+    #topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px;
+      height: 60px;
+      background: rgba(26, 29, 46, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    #topbar .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    #topbar .brand .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    #topbar .brand .version-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: rgba(79,142,247,0.15);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: var(--radius-full);
+      padding: 2px 7px;
+      letter-spacing: 0.5px;
+    }
+
+    #topbar .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 16px;
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .nav-tab.active {
+      color: var(--accent-blue);
+      background: rgba(79,142,247,0.12);
+    }
+
+    #topbar .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse-sync 2s infinite;
+    }
+
+    @keyframes pulse-sync {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .sync-dot.syncing { background: var(--accent-yellow); }
+    .sync-dot.error { background: var(--accent-red); animation: none; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-blue);
+      color: #fff;
+      border-color: var(--accent-blue);
+    }
+    .btn-primary:hover { background: var(--accent-blue-dark); border-color: var(--accent-blue-dark); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.07);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+
+    .btn-danger {
+      background: rgba(239,68,68,0.12);
+      color: var(--accent-red);
+      border-color: rgba(239,68,68,0.3);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.22); }
+
+    .btn-success {
+      background: rgba(34,197,94,0.12);
+      color: var(--accent-green);
+      border-color: rgba(34,197,94,0.3);
+    }
+    .btn-success:hover { background: rgba(34,197,94,0.22); }
+
+    .btn-warning {
+      background: rgba(245,158,11,0.12);
+      color: var(--accent-yellow);
+      border-color: rgba(245,158,11,0.3);
+    }
+    .btn-warning:hover { background: rgba(245,158,11,0.22); }
+
+    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+    .btn-lg { padding: 10px 20px; font-size: 0.9375rem; }
+    .btn-icon { padding: 7px; gap: 0; }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ============================================================
+       MAIN CONTENT WRAPPER
+    ============================================================ */
+    #main-content {
+      flex: 1;
+      padding: 20px 24px 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ============================================================
+       PAGE VIEWS
+    ============================================================ */
+    .page-view {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .page-view.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       KPI METRICS BAR
+    ============================================================ */
+    #kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all var(--transition-med);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .kpi-card.blue::before { background: var(--accent-blue); }
+    .kpi-card.green::before { background: var(--accent-green); }
+    .kpi-card.red::before { background: var(--accent-red); }
+    .kpi-card.yellow::before { background: var(--accent-yellow); }
+    .kpi-card.purple::before { background: var(--accent-purple); }
+    .kpi-card.cyan::before { background: var(--accent-cyan); }
+
+    .kpi-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(79,142,247,0.3);
+      transform: translateY(-1px);
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .kpi-value {
+      font-size: 1.625rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .kpi-card.blue .kpi-value { color: var(--accent-blue); }
+    .kpi-card.green .kpi-value { color: var(--accent-green); }
+    .kpi-card.red .kpi-value { color: var(--accent-red); }
+    .kpi-card.yellow .kpi-value { color: var(--accent-yellow); }
+    .kpi-card.purple .kpi-value { color: var(--accent-purple); }
+    .kpi-card.cyan .kpi-value { color: var(--accent-cyan); }
+
+    .kpi-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       FILTER BAR
+    ============================================================ */
+    #filter-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .form-control {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      padding: 6px 10px;
+      transition: border-color var(--transition-fast);
+      outline: none;
+      font-family: var(--font-main);
+    }
+
+    .form-control:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+    }
+
+    .form-control::placeholder { color: var(--text-muted); }
+
+    select.form-control {
+      padding-right: 28px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a6178' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      cursor: pointer;
+    }
+
+    .filter-search {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filter-search input {
+      width: 100%;
+      padding-left: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6178' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    /* ============================================================
+       LEADS TABLE / LIST
+    ============================================================ */
+    #leads-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .leads-table-header {
+      display: grid;
+      grid-template-columns: 44px 1fr 130px 140px 130px 120px 160px 110px;
+      gap: 8px;
+      padding: 8px 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 4px;
+    }
+
+    .lead-row {
+      display: grid;
+      grid-template-columns: 44px 1fr 130px 140px 130px 120px 160px 110px;
+      gap: 8px;
+      align-items: center;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    .lead-row:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(79,142,247,0.3);
+      transform: translateX(2px);
+    }
+
+    .lead-row.overdue {
+      border-left: 3px solid var(--accent-red);
+    }
+
+    .lead-row.due-soon {
+      border-left: 3px solid var(--accent-yellow);
+    }
+
+    .lead-row.on-track {
+      border-left: 3px solid var(--accent-green);
+    }
+
+    .lead-priority {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .priority-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .lead-info { min-width: 0; }
+
+    .lead-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lead-contact {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .stage-badge.stage-new { background: rgba(6,182,212,0.15); color: var(--stage-new); border: 1px solid rgba(6,182,212,0.3); }
+    .stage-badge.stage-contacted { background: rgba(79,142,247,0.15); color: var(--stage-contacted); border: 1px solid rgba(79,142,247,0.3); }
+    .stage-badge.stage-meeting { background: rgba(168,85,247,0.15); color: var(--stage-meeting); border: 1px solid rgba(168,85,247,0.3); }
+    .stage-badge.stage-proposal { background: rgba(245,158,11,0.15); color: var(--stage-proposal); border: 1px solid rgba(245,158,11,0.3); }
+    .stage-badge.stage-negotiation { background: rgba(249,115,22,0.15); color: var(--stage-negotiation); border: 1px solid rgba(249,115,22,0.3); }
+    .stage-badge.stage-won { background: rgba(34,197,94,0.15); color: var(--stage-won); border: 1px solid rgba(34,197,94,0.3); }
+    .stage-badge.stage-lost { background: rgba(239,68,68,0.15); color: var(--stage-lost); border: 1px solid rgba(239,68,68,0.3); }
+
+    .sla-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .sla-badge.on-track { background: rgba(34,197,94,0.12); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.25); }
+    .sla-badge.due-soon { background: rgba(245,158,11,0.12); color: var(--accent-yellow); border: 1px solid rgba(245,158,11,0.25); }
+    .sla-badge.overdue { background: rgba(239,68,68,0.12); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.25); }
+    .sla-badge.no-followup { background: rgba(90,97,120,0.12); color: var(--text-muted); border: 1px solid rgba(90,97,120,0.2); }
+
+    .sla-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: sla-pulse 1.5s infinite;
+    }
+
+    @keyframes sla-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .channel-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .assignee-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .avatar-sm {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .lead-row-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    .countdown-timer {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-timer.overdue { color: var(--accent-red); }
+    .countdown-timer.due-soon { color: var(--accent-yellow); }
+    .countdown-timer.on-track { color: var(--accent-green); }
+
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .empty-icon {
+      font-size: 3rem;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .empty-state p {
+      font-size: 0.8125rem;
+    }
+
+    /* ============================================================
+       MODAL OVERLAY
+    ============================================================ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(10, 12, 20, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-med);
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: var(--bg-modal);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.96) translateY(10px);
+      transition: transform var(--transition-med);
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-box.wide { max-width: 780px; }
+    .modal-box.full { max-width: 1100px; }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    .modal-header h2 {
+      flex: 1;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+    }
+    .modal-close:hover { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       FORM ELEMENTS
+    ============================================================ */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-label .required {
+      color: var(--accent-red);
+      margin-left: 3px;
+    }
+
+    .form-control.full { width: 100%; }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .form-error {
+      font-size: 0.7rem;
+      color: var(--accent-red);
+    }
+
+    /* ============================================================
+       ACTION CENTER MODAL (Full-Width)
+    ============================================================ */
+    #action-center-modal .modal-box {
+      max-width: 1100px;
+      height: 88vh;
+    }
+
+    .ac-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .ac-main {
+      overflow-y: auto;
+      padding: 20px;
+      border-right: 1px solid var(--border-color);
+    }
+
+    .ac-sidebar {
+      overflow-y: auto;
+      padding: 16px;
+      background: rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Lead Header in Action Center */
+    .ac-lead-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .ac-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .ac-lead-meta { flex: 1; min-width: 0; }
+
+    .ac-lead-name {
+      font-size: 1.1875rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .ac-lead-contact {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ac-lead-contact span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ac-lead-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Pipeline Stage Stepper */
+    .pipeline-stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 80px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .pipeline-step .step-indicator {
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--border-color);
+      position: relative;
+      transition: all var(--transition-med);
+    }
+
+    .pipeline-step.active .step-indicator,
+    .pipeline-step.completed .step-indicator {
+      background: currentColor;
+    }
+
+    .pipeline-step .step-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+      white-space: nowrap;
+      transition: color var(--transition-fast);
+    }
+
+    .pipeline-step.active .step-label,
+    .pipeline-step.completed .step-label {
+      color: currentColor;
+    }
+
+    .pipeline-step.stage-new { color: var(--stage-new); }
+    .pipeline-step.stage-contacted { color: var(--stage-contacted); }
+    .pipeline-step.stage-meeting { color: var(--stage-meeting); }
+    .pipeline-step.stage-proposal { color: var(--stage-proposal); }
+    .pipeline-step.stage-negotiation { color: var(--stage-negotiation); }
+    .pipeline-step.stage-won { color: var(--stage-won); }
+    .pipeline-step.stage-lost { color: var(--stage-lost); }
+
+    /* SLA Panel */
+    .sla-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 18px;
+    }
+
+    .sla-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .sla-panel-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .sla-countdown-display {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sla-time-block {
+      text-align: center;
+    }
+
+    .sla-time-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .sla-time-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .sla-separator {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .sla-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .sla-progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 1s linear, background-color var(--transition-med);
+    }
+
+    /* Metadata Grid */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .meta-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+    }
+
+    .meta-item-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .meta-item-value {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* Comments Section */
+    .comments-section { margin-bottom: 18px; }
+
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .count-badge {
+      background: rgba(79,142,247,0.15);
+      color: var(--accent-blue);
+      border-radius: var(--radius-full);
+      padding: 1px 7px;
+      font-size: 0.68rem;
+    }
+
+    .comment-input-area {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .comment-input-area textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      padding: 8px 10px;
+      resize: none;
+      outline: none;
+      font-family: var(--font-main);
+      line-height: 1.5;
+      min-height: 70px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .comment-input-area textarea:focus { border-color: var(--border-focus); }
+    .comment-input-area textarea::placeholder { color: var(--text-muted); }
+
+    .comment-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .comment-author-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .comment-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      transition: all var(--transition-fast);
+    }
+
+    .comment-item:hover { border-color: rgba(79,142,247,0.2); }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 5px;
+    }
+
+    .comment-author {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+    }
+
+    .comment-time {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .comment-text {
+      font-size: 0.8125rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    /* Audit Log */
+    .audit-log {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .audit-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .audit-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 28px;
+      bottom: 0;
+      width: 1px;
+      background: var(--border-color);
+    }
+
+    .audit-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.625rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .audit-content { flex: 1; min-width: 0; }
+
+    .audit-text {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .audit-text strong { color: var(--text-primary); }
+
+    .audit-time {
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .audit-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    /* Sidebar Panels */
+    .sidebar-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .sidebar-panel-header {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      background: rgba(0,0,0,0.15);
+    }
+
+    .sidebar-panel-body {
+      padding: 10px 12px;
+    }
+
+    /* Quick Actions Panel */
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .quick-action-btn:hover {
+      background: rgba(79,142,247,0.1);
+      border-color: rgba(79,142,247,0.3);
+      color: var(--accent-blue);
+    }
+
+    .quick-action-btn .qa-icon {
+      font-size: 1.2rem;
+    }
+
+    /* WhatsApp Button */
+    .wa-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(37,211,102,0.1);
+      border: 1px solid rgba(37,211,102,0.3);
+      border-radius: var(--radius-md);
+      color: #25d366;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .wa-btn:hover {
+      background: rgba(37,211,102,0.18);
+      border-color: rgba(37,211,102,0.5);
+    }
+
+    /* ============================================================
+       PIPELINE / KANBAN VIEW
+    ============================================================ */
+    #pipeline-view {
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+
+    .kanban-board {
+      display: flex;
+      gap: 12px;
+      min-width: max-content;
+    }
+
+    .kanban-column {
+      width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .kanban-column-header {
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+    }
+
+    .kanban-col-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .kanban-col-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .kanban-col-count {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-input);
+      padding: 1px 7px;
+      border-radius: var(--radius-full);
+    }
+
+    .kanban-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .kanban-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(79,142,247,0.35);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kanban-card-name {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .kanban-card-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    /* ============================================================
+       ANALYTICS PAGE
+    ============================================================ */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+
+    .chart-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      width: 100px;
+      flex-shrink: 0;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 18px;
+      background: var(--bg-input);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .bar-value {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 28px;
+    }
+
+    /* ============================================================
+       SETTINGS PAGE
+    ============================================================ */
+    .settings-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .settings-section h3 {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .setting-row:last-child { border-bottom: none; }
+
+    .setting-info h4 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .setting-info p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Toggle Switch */
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border-color);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: background var(--transition-med);
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform var(--transition-med);
+    }
+
+    .toggle input:checked + .toggle-slider { background: var(--accent-blue); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ============================================================
+       TOAST NOTIFICATIONS
+    ============================================================ */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      pointer-events: all;
+      animation: slideInRight 0.3s ease, fadeOut 0.4s ease 3.5s forwards;
+      min-width: 260px;
+      max-width: 380px;
+    }
+
+    .toast.success { border-left: 3px solid var(--accent-green); }
+    .toast.error { border-left: 3px solid var(--accent-red); }
+    .toast.warning { border-left: 3px solid var(--accent-yellow); }
+    .toast.info { border-left: 3px solid var(--accent-blue); }
+
+    .toast-icon { font-size: 1rem; flex-shrink: 0; }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    /* ============================================================
+       LOADING SPINNER
+    ============================================================ */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-color);
+      border-top-color: var(--accent-blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #app-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    #app-loading .load-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    #app-loading p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       CONFIRM DIALOG
+    ============================================================ */
+    #confirm-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(10,12,20,0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-med);
+    }
+
+    #confirm-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .confirm-box {
+      background: var(--bg-modal);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+      margin: 16px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .confirm-icon {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .confirm-title {
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .confirm-message {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1100px) {
+      .ac-layout { grid-template-columns: 1fr; }
+      .ac-sidebar { border-top: 1px solid var(--border-color); }
+    }
+
+    @media (max-width: 900px) {
+      .leads-table-header,
+      .lead-row {
+        grid-template-columns: 32px 1fr 110px 110px 90px;
+      }
+      .leads-table-header .col-channel,
+      .lead-row .col-channel,
+      .leads-table-header .col-assignee,
+      .lead-row .col-assignee,
+      .leads-table-header .col-followup,
+      .lead-row .col-followup { display: none; }
+    }
+
+    @media (max-width: 650px) {
+      #main-content { padding: 12px 12px 40px; }
+      #topbar { padding: 0 12px; }
+      .topbar-nav { display: none; }
+      #kpi-bar { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       MISC UTILITY CLASSES
+    ============================================================ */
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .mt-1 { margin-top: 4px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mb-2 { margin-bottom: 8px; }
+    .mb-3 { margin-bottom: 12px; }
+    .text-muted { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-sm { font-size: 0.8125rem; }
+    .text-xs { font-size: 0.72rem; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hidden { display: none !important; }
+    .w-full { width: 100%; }
+    .divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 12px 0;
+    }
+
+    /* Tabs within modal */
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all var(--transition-fast);
+    }
+
+    .tab-btn:hover { color: var(--text-primary); }
+    .tab-btn.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Import zone */
+    .import-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 32px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-med);
+      color: var(--text-muted);
+    }
+
+    .import-zone:hover, .import-zone.drag-over {
+      border-color: var(--accent-blue);
+      background: rgba(79,142,247,0.05);
+      color: var(--accent-blue);
+    }
+
+    .import-zone .import-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     APP LOADING SCREEN
+============================================================ -->
+<div id="app-loading">
+  <div class="load-logo">Y</div>
+  <div class="spinner"></div>
+  <p>Initializing CRM v3.0...</p>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+============================================================ -->
+<div id="app" style="display:none;">
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <a href="#" class="brand" onclick="return false;">
+      <div class="logo-icon">Y</div>
+      <span>Youssef Sales CRM</span>
+      <span class="version-badge">v3.0</span>
+    </a>
+
+    <nav class="topbar-nav">
+      <button class="nav-tab active" data-page="leads">📋 Leads</button>
+      <button class="nav-tab" data-page="pipeline">🔀 Pipeline</button>
+      <button class="nav-tab" data-page="analytics">📊 Analytics</button>
+      <button class="nav-tab" data-page="settings">⚙️ Settings</button>
+    </nav>
+
+    <div class="topbar-right">
+      <div class="sync-status">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-label">Live</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="btn-import">⬆ Import</button>
+      <button class="btn btn-secondary btn-sm" id="btn-export">⬇ Export</button>
+      <button class="btn btn-primary btn-sm" id="btn-add-lead">+ Add Lead</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
+
+    <!-- ===========================
+         LEADS PAGE
+    =========================== -->
+    <section class="page-view active" id="page-leads">
+
+      <!-- KPI Bar -->
+      <div id="kpi-bar">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Active Pipeline</div>
+          <div class="kpi-value" id="kpi-pipeline-value">$0</div>
+          <div class="kpi-sub">Total budget in active leads</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Overdue Follow-Ups</div>
+          <div class="kpi-value" id="kpi-overdue">0</div>
+          <div class="kpi-sub">Leads needing immediate action</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Close Rate</div>
+          <div class="kpi-value" id="kpi-close-rate">0%</div>
+          <div class="kpi-sub">Won vs Total closed</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-label">Today's Activity</div>
+          <div class="kpi-value" id="kpi-today-activity">0</div>
+          <div class="kpi-sub">Actions logged today</div>
+        </div>
+        <div class="kpi-card cyan">
+          <div class="kpi-label">Total Leads</div>
+          <div class="kpi-value" id="kpi-total-leads">0</div>
+          <div class="kpi-sub">All active leads</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">Due Soon</div>
+          <div class="kpi-value" id="kpi-due-soon">0</div>
+          <div class="kpi-sub">Follow-ups within 24h</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div id="filter-bar">
+        <div class="filter-search">
+          <input type="text" class="form-control full" id="filter-search" placeholder="Search name, phone, project..." autocomplete="off" />
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Stage</span>
+          <select class="form-control" id="filter-stage">
+            <option value="">All Stages</option>
+            <option value="New Lead">New Lead</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Meeting Scheduled">Meeting Scheduled</option>
+            <option value="Proposal Sent">Proposal Sent</option>
+            <option value="Negotiation">Negotiation</option>
+            <option value="Won">Won</option>
+            <option value="Lost">Lost</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Agent</span>
+          <select class="form-control" id="filter-agent">
+            <option value="">All Agents</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Channel</span>
+          <select class="form-control" id="filter-channel">
+            <option value="">All Channels</option>
+            <option value="Meta Ads">Meta Ads</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Referral">Referral</option>
+            <option value="Cold Call">Cold Call</option>
+            <option value="Direct">Direct</option>
+            <option value="Website">Website</option>
+            <option value="Email">Email</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">SLA</span>
+          <select class="form-control" id="filter-sla">
+            <option value="">All</option>
+            <option value="overdue">Overdue Only</option>
+            <option value="due-soon">Due Soon</option>
+            <option value="on-track">On Track</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Project</span>
+          <select class="form-control" id="filter-project">
+            <option value="">All Projects</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-ghost btn-sm" id="btn-clear-filters">✕ Clear</button>
+          <button class="btn btn-secondary btn-sm" id="btn-toggle-view" title="Toggle View">⊞</button>
+        </div>
+      </div>
+
+      <!-- Leads Table Header -->
+      <div class="leads-table-header" id="leads-table-header">
+        <div></div>
+        <div>Lead / Client</div>
+        <div>Stage</div>
+        <div class="col-channel">Channel</div>
+        <div class="col-assignee">Agent</div>
+        <div>SLA Status</div>
+        <div class="col-followup">Next Follow-Up</div>
+        <div style="text-align:right">Actions</div>
+      </div>
+
+      <!-- Leads List -->
+      <div id="leads-container">
+        <div class="empty-state" id="leads-empty">
+          <div class="empty-icon">📋</div>
+          <h3>No leads yet</h3>
+          <p>Click "Add Lead" to create your first lead</p>
+          <button class="btn btn-primary mt-2" id="btn-add-lead-empty">+ Add Your First Lead</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===========================
+         PIPELINE PAGE
+    =========================== -->
+    <section class="page-view" id="page-pipeline">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <h2>Pipeline View</h2>
+          <p class="text-secondary text-sm mt-1">Drag-style Kanban board showing all leads by stage</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-add-lead-pipeline">+ Add Lead</button>
+      </div>
+      <div id="pipeline-view">
+        <div class="kanban-board" id="kanban-board"></div>
+      </div>
+    </section>
+
+    <!-- ===========================
+         ANALYTICS PAGE
+    =========================== -->
+    <section class="page-view" id="page-analytics">
+      <div style="margin-bottom:20px;">
+        <h2>Analytics & Reports</h2>
+        <p class="text-secondary text-sm mt-1">Performance insights across your entire pipeline</p>
+      </div>
+      <div class="analytics-grid" id="analytics-grid"></div>
+    </section>
+
+    <!-- ===========================
+         SETTINGS PAGE
+    =========================== -->
+    <section class="page-view" id="page-settings">
+      <div style="margin-bottom:20px;">
+        <h2>Settings & Configuration</h2>
+        <p class="text-secondary text-sm mt-1">Manage CRM preferences, agents, and data</p>
+      </div>
+
+      <!-- Current User -->
+      <div class="settings-section">
+        <h3>👤 Current User / Agent</h3>
+        <div class="form-group">
+          <label class="form-label">Your Name (used for comments & audit logs)</label>
+          <input type="text" class="form-control" id="setting-username" style="max-width:300px;" placeholder="e.g. Youssef" />
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-save-username">Save Name</button>
+      </div>
+
+      <!-- Agent Management -->
+      <div class="settings-section">
+        <h3>👥 Agent Management</h3>
+        <div id="agents-list" style="margin-bottom:12px;display:flex;flex-direction:column;gap:8px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" class="form-control" id="new-agent-input" placeholder="Add agent name..." style="max-width:240px;" />
+          <button class="btn btn-primary btn-sm" id="btn-add-agent">+ Add Agent</button>
+        </div>
+      </div>
+
+      <!-- Projects Management -->
+      <div class="settings-section">
+        <h3>🏗 Project / Property Management</h3>
+        <div id="projects-list" style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" class="form-control" id="new-project-input" placeholder="Add project name..." style="max-width:240px;" />
+          <button class="btn btn-primary btn-sm" id="btn-add-project">+ Add Project</button>
+        </div>
+      </div>
+
+      <!-- Data Management -->
+      <div class="settings-section">
+        <h3>🗄 Data Management</h3>
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Export All Data</h4>
+            <p>Download a full JSON backup of all leads, comments, and audit logs</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-export-settings">⬇ Export JSON</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Import Data</h4>
+            <p>Restore from a previously exported JSON backup file</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-import-settings">⬆ Import JSON</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Storage Engine</h4>
+            <p id="storage-engine-label">Detecting...</p>
+          </div>
+          <span class="sla-badge" id="storage-engine-badge">—</span>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Clear All Data</h4>
+            <p>Permanently delete all leads, comments and logs. Cannot be undone.</p>
+          </div>
+          <button class="btn btn-danger btn-sm" id="btn-clear-all-data">🗑 Clear All</button>
+        </div>
+      </div>
+
+      <!-- WhatsApp Templates -->
+      <div class="settings-section">
+        <h3>💬 WhatsApp Message Templates</h3>
+        <div id="wa-templates-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </section>
+
+  </main><!-- /main-content -->
+
+</div><!-- /#app -->
+
+<!-- ============================================================
+     MODALS
+============================================================ -->
+
+<!-- Add / Edit Lead Modal -->
+<div class="modal-overlay" id="lead-form-modal">
+  <div class="modal-box wide">
+    <div class="modal-header">
+      <span style="font-size:1.2rem;">📝</span>
+      <h2 id="lead-form-title">Add New Lead</h2>
+      <button class="modal-close" data-close="lead-form-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="lf-id" />
+      <div class="tab-bar" id="lead-form-tabs">
+        <button class="tab-btn active" data-tab="lf-tab-basic">Basic Info</button>
+        <button class="tab-btn" data-tab="lf-tab-details">Details</button>
+        <button class="tab-btn" data-tab="lf-tab-followup">Follow-Up</button>
+      </div>
+
+      <!-- Basic Tab -->
+      <div class="tab-panel active" id="lf-tab-basic">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="required">*</span></label>
+            <input type="text" class="form-control full" id="lf-name" placeholder="e.g. Ahmed Hassan" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="text" class="form-control full" id="lf-phone" placeholder="e.g. +20 1xx xxx xxxx" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control full" id="lf-email" placeholder="email@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pipeline Stage</label>
+            <select class="form-control full" id="lf-stage">
+              <option value="New Lead">New Lead</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Meeting Scheduled">Meeting Scheduled</option>
+              <option value="Proposal Sent">Proposal Sent</option>
+              <option value="Negotiation">Negotiation</option>
+              <option value="Won">Won</option>
+              <option value="Lost">Lost</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Assigned Agent</label>
+            <select class="form-control full" id="lf-agent"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lead Source / Channel</label>
+            <select class="form-control full" id="lf-channel">
+              <option value="Meta Ads">Meta Ads</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Referral">Referral</option>
+              <option value="Cold Call">Cold Call</option>
+              <option value="Direct">Direct</option>
+              <option value="Website">Website</option>
+              <option value="Email">Email</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Tab -->
+      <div class="tab-panel" id="lf-tab-details">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Target Project / Property</label>
+            <select class="form-control full" id="lf-project"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Budget (USD)</label>
+            <input type="number" class="form-control full" id="lf-budget" placeholder="e.g. 250000" min="0" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Location / Area</label>
+            <input type="text" class="form-control full" id="lf-location" placeholder="e.g. New Cairo, 5th Settlement" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-control full" id="lf-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Specific Requirements</label>
+          <textarea class="form-control full" id="lf-requirements" placeholder="Bedrooms, size, floor preference, etc." style="min-height:90px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Initial Note</label>
+          <textarea class="form-control full" id="lf-note" placeholder="Any additional context about this lead..." style="min-height:70px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Follow-Up Tab -->
+      <div class="tab-panel" id="lf-tab-followup">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Next Follow-Up Date</label>
+            <input type="date" class="form-control full" id="lf-followup-date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Follow-Up Time</label>
+            <input type="time" class="form-control full" id="lf-followup-time" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Follow-Up Note / Reminder</label>
+          <textarea class="form-control full" id="lf-followup-note" placeholder="What to discuss or prepare..." style="min-height:80px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">SLA Hours (before due = warning)</label>
+          <input type="number" class="form-control" id="lf-sla-hours" value="24" min="1" max="168" style="max-width:150px;" />
+          <span class="form-hint">Hours before follow-up time when status becomes "Due Soon"</span>
+        </div>
+      </div>
+
+      <div id="lf-errors" style="display:none;" class="form-error mt-2"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="lead-form-modal">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-lead">💾 Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- Action Center Modal -->
+<div class="modal-overlay" id="action-center-modal">
+  <div class="modal-box full">
+    <div class="modal-header">
+      <span style="font-size:1.2rem;">⚡</span>
+      <h2 id="ac-modal-title">Action Center</h2>
+      <div style="margin-left:auto;display:flex;gap:6px;">
+        <button class="btn btn-secondary btn-sm" id="ac-btn-edit">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" id="ac-btn-delete">🗑 Delete</button>
+      </div>
+      <button class="modal-close" data-close="action-center-modal" style="margin-left:8px;">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;display:flex;flex-direction:column;height:calc(100% - 60px);overflow:hidden;">
+      <div class="ac-layout">
+
+        <!-- Main Area -->
+        <div class="ac-main" id="ac-main-panel">
+          <!-- Lead Header -->
+          <div class="ac-lead-header" id="ac-lead-header">
+            <div class="ac-avatar" id="ac-avatar">?</div>
+            <div class="ac-lead-meta">
+              <div class="ac-lead-name" id="ac-lead-name">—</div>
+              <div class="ac-lead-contact" id="ac-lead-contact"></div>
+            </div>
+            <div class="ac-lead-actions">
+              <button class="wa-btn" id="ac-whatsapp-btn" style="width:auto;padding:8px 12px;">
+                <span>📱</span> WhatsApp
+              </button>
+            </div>
+          </div>
+
+          <!-- Pipeline Stepper -->
+          <div class="pipeline-stepper" id="ac-pipeline-stepper"></div>
+
+          <!-- SLA Panel -->
+          <div class="sla-panel" id="ac-sla-panel">
+            <div class="sla-panel-header">
+              <span class="sla-panel-title">⏱ SLA & Follow-Up</span>
+              <span class="sla-badge" id="ac-sla-badge">—</span>
+            </div>
+            <div class="sla-countdown-display" id="ac-countdown-display">
+              <div class="sla-time-block">
+                <div class="sla-time-value" id="ac-days-val">—</div>
+                <div class="sla-time-label">Days</div>
+              </div>
+              <div class="sla-separator">:</div>
+              <div class="sla-time-block">
+                <div class="sla-time-value" id="ac-hours-val">—</div>
+                <div class="sla-time-label">Hours</div>
+              </div>
+              <div class="sla-separator">:</div>
+              <div class="sla-time-block">
+                <div class="sla-time-value" id="ac-mins-val">—</div>
+                <div class="sla-time-label">Mins</div>
+              </div>
+              <div style="margin-left:12px;font-size:0.78rem;color:var(--text-muted);" id="ac-followup-datetime-label">No follow-up set</div>
+            </div>
+            <div class="sla-progress-bar">
+              <div class="sla-progress-fill" id="ac-sla-progress"></div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+              <input type="date" class="form-control" id="ac-followup-date-input" style="flex:1;" />
+              <input type="time" class="form-control" id="ac-followup-time-input" style="flex:1;" />
+              <button class="btn btn-primary btn-sm" id="ac-save-followup">Set</button>
+            </div>
+          </div>
+
+          <!-- Metadata Grid -->
+          <div class="meta-grid" id="ac-meta-grid"></div>
+
+          <!-- Main Tabs -->
+          <div class="tab-bar">
+            <button class="tab-btn active" data-ac-tab="ac-tab-comments">💬 Notes (<span id="ac-comments-count">0</span>)</button>
+            <button class="tab-btn" data-ac-tab="ac-tab-audit">📋 Audit Log (<span id="ac-audit-count">0</span>)</button>
+          </div>
+
+          <!-- Comments Tab -->
+          <div class="tab-panel active" id="ac-tab-comments">
+            <div class="comments-section">
+              <div class="comment-input-area">
+                <textarea id="ac-comment-input" placeholder="Add a note or update..."></textarea>
+                <div class="comment-actions">
+                  <span class="comment-author-label">
+                    <span>👤</span>
+                    <span id="ac-comment-author-label">—</span>
+                  </span>
+                  <button class="btn btn-primary btn-sm" id="ac-btn-add-comment">Add Note</button>
+                </div>
+              </div>
+              <div class="comments-list" id="ac-comments-list"></div>
+            </div>
+          </div>
+
+          <!-- Audit Tab -->
+          <div class="tab-panel" id="ac-tab-audit">
+            <div class="audit-filter-bar">
+              <span class="filter-label">Filter by agent:</span>
+              <select class="form-control" id="ac-audit-filter-agent" style="max-width:180px;">
+                <option value="">All Agents</option>
+              </select>
+              <button class="btn btn-ghost btn-sm" id="ac-audit-clear-filter">✕</button>
+            </div>
+            <div class="audit-log" id="ac-audit-log"></div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="ac-sidebar" id="ac-sidebar">
+
+          <!-- Stage Change -->
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-header">🔄 Change Stage</div>
+            <div class="sidebar-panel-body">
+              <div id="ac-stage-buttons" style="display:flex;flex-direction:column;gap:5px;"></div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-header">⚡ Quick Actions</div>
+            <div class="sidebar-panel-body">
+              <div class="quick-actions-grid" id="ac-quick-actions"></div>
+            </div>
+          </div>
+
+          <!-- WhatsApp Templates -->
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-header">📱 WhatsApp Templates</div>
+            <div class="sidebar-panel-body" id="ac-wa-templates"></div>
+          </div>
+
+          <!-- Lead Score -->
+          <div class="sidebar-panel">
+            <div class="sidebar-panel-header">📈 Lead Score</div>
+            <div class="sidebar-panel-body" id="ac-lead-score-panel"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>⬆</span>
+      <h2>Import Data</h2>
+      <button class="modal-close" data-close="import-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="import-zone" id="import-drop-zone">
+        <div class="import-icon">📂</div>
+        <p class="font-semibold">Drop your JSON backup here</p>
+        <p class="text-xs text-muted mt-1">or click to browse</p>
+        <input type="file" id="import-file-input" accept=".json" style="display:none;" />
+      </div>
+      <div id="import-preview" style="display:none;margin-top:14px;">
+        <div class="meta-item">
+          <div class="meta-item-label">File Info</div>
+          <div class="meta-item-value" id="import-file-info"></div>
+        </div>
+        <div id="import-validation-result" class="mt-2"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="import-modal">Cancel</button>
+      <button class="btn btn-primary" id="btn-confirm-import" disabled>⬆ Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Message Modal -->
+<div class="modal-overlay" id="wa-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span style="color:#25d366;font-size:1.3rem;">📱</span>
+      <h2>Send WhatsApp Message</h2>
+      <button class="modal-close" data-close="wa-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="text" class="form-control full" id="wa-phone" placeholder="+201xxxxxxxxx" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Template</label>
+        <select class="form-control full" id="wa-template-select">
+          <option value="">Select a template...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-control full" id="wa-message" style="min-height:140px;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="wa-modal">Cancel</button>
+      <button class="btn btn-success" id="btn-send-wa" style="background:rgba(37,211,102,0.15);color:#25d366;border-color:rgba(37,211,102,0.3);">
+        📱 Open in WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Are you sure?</div>
+    <div class="confirm-message" id="confirm-message">This action cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+<script src="app.js"></script>
+</body>
+</html>

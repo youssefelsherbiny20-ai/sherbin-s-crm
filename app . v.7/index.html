@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Real Estate SaaS | OS</title>
+    
+    <!-- Google Fonts: Inter (Apple/Linear Style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind Configuration for Modern Dark Theme -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        base: '#0A0A0C',      // Deepest background
+                        surface: '#131316',   // Sidebar & Card background
+                        elevated: '#1C1C21',  // Hover states & Modals
+                        borderline: '#ffffff0f', // Subtle borders (white/6)
+                        primary: '#5E6AD2',   // Soft Indigo/Purple
+                        primaryHover: '#6F7BF7',
+                        textMain: '#EDEDED',
+                        textMuted: '#8A8F98',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar for a premium feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2C2C30;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3F3F46;
+        }
+        
+        /* Smooth fade-in for main content */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-base text-textMain font-sans h-screen flex overflow-hidden antialiased selection:bg-primary/30">
+
+    <!-- ================== LEFT SIDEBAR ================== -->
+    <aside class="w-64 bg-surface border-r border-borderline flex flex-col justify-between shrink-0 z-20">
+        <!-- Logo Area -->
+        <div class="h-16 flex items-center px-6 border-b border-borderline">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shadow-lg shadow-primary/20">
+                    <i class="fa-solid fa-building text-white text-sm"></i>
+                </div>
+                <span class="font-semibold tracking-wide text-sm">RealEstate<span class="text-textMuted">OS</span></span>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1">
+            <p class="px-3 text-[11px] font-semibold text-textMuted uppercase tracking-wider mb-2">Core Modules</p>
+            
+            <button data-view="action-center" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md bg-elevated text-textMain shadow-sm border border-borderline transition-all duration-200 group">
+                <i class="fa-solid fa-bolt text-primary w-5 text-center group-hover:scale-110 transition-transform"></i>
+                Action Center
+            </button>
+
+            <button data-view="sales-pipeline" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-textMuted hover:bg-elevated hover:text-textMain transition-all duration-200 group">
+                <i class="fa-solid fa-layer-group text-textMuted group-hover:text-textMain w-5 text-center transition-colors"></i>
+                Sales Pipeline
+            </button>
+
+            <button data-view="property-inventory" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-textMuted hover:bg-elevated hover:text-textMain transition-all duration-200 group">
+                <i class="fa-solid fa-cubes text-textMuted group-hover:text-textMain w-5 text-center transition-colors"></i>
+                Property Inventory
+            </button>
+
+            <button data-view="cil-radar" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-textMuted hover:bg-elevated hover:text-textMain transition-all duration-200 group">
+                <i class="fa-solid fa-crosshairs text-textMuted group-hover:text-textMain w-5 text-center transition-colors"></i>
+                CIL Radar
+            </button>
+
+            <button data-view="financial-engine" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-textMuted hover:bg-elevated hover:text-textMain transition-all duration-200 group">
+                <i class="fa-solid fa-chart-pie text-textMuted group-hover:text-textMain w-5 text-center transition-colors"></i>
+                Financial Engine
+            </button>
+
+            <div class="mt-4 mb-2 h-px bg-borderline mx-3"></div>
+            <p class="px-3 text-[11px] font-semibold text-textMuted uppercase tracking-wider mb-2">Intelligence</p>
+
+            <button data-view="ai-voice-simulator" class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-textMuted hover:bg-elevated hover:text-textMain transition-all duration-200 group relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <i class="fa-solid fa-robot text-purple-400 w-5 text-center group-hover:animate-pulse"></i>
+                <span class="relative z-10">AI Voice Simulator</span>
+                <span class="ml-auto text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/30">Beta</span>
+            </button>
+        </nav>
+
+        <!-- User Profile Area -->
+        <div class="p-4 border-t border-borderline">
+            <div class="flex items-center gap-3 p-2 rounded-md hover:bg-elevated cursor-pointer transition-colors">
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=2C2C30&color=EDEDED" alt="User" class="w-9 h-9 rounded-full border border-borderline">
+                <div class="flex flex-col flex-1 min-w-0">
+                    <span class="text-sm font-medium truncate">Principal Admin</span>
+                    <span class="text-xs text-textMuted truncate">System Architect</span>
+                </div>
+                <i class="fa-solid fa-gear text-textMuted hover:text-white transition-colors"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ================== MAIN CONTENT WRAPPER ================== -->
+    <div class="flex-1 flex flex-col min-w-0 bg-base relative">
+        
+        <!-- ================== TOP HEADER ================== -->
+        <header class="h-16 border-b border-borderline bg-base/80 backdrop-blur-md sticky top-0 z-10 flex items-center justify-between px-8">
+            <!-- Breadcrumbs / Current View Title -->
+            <div class="flex items-center gap-2 text-sm">
+                <span class="text-textMuted">System</span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-textMuted opacity-50"></i>
+                <span class="font-medium text-textMain" id="header-title">Action Center</span>
+            </div>
+
+            <!-- KPIs & SLAs Indicators -->
+            <div class="flex items-center gap-6">
+                <!-- SLA Indicators -->
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-md">
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-xs font-medium text-green-400">SLA: 99.99%</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-elevated border border-borderline px-2.5 py-1 rounded-md">
+                        <i class="fa-solid fa-server text-textMuted text-xs"></i>
+                        <span class="text-xs font-medium text-textMain">Latency: 42ms</span>
+                    </div>
+                </div>
+                
+                <div class="w-px h-6 bg-borderline"></div>
+                
+                <!-- Business KPIs -->
+                <div class="flex items-center gap-5 text-sm">
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] text-textMuted uppercase tracking-wider font-semibold">Active Deals</span>
+                        <span class="font-medium text-textMain leading-none mt-1">1,248</span>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] text-textMuted uppercase tracking-wider font-semibold">Today's Revenue</span>
+                        <span class="font-medium text-green-400 leading-none mt-1">$4.2M</span>
+                    </div>
+                </div>
+                
+                <!-- Global Actions -->
+                <div class="flex items-center gap-3 ml-2">
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center text-textMuted hover:text-white hover:bg-elevated transition-colors relative">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-base"></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================== DYNAMIC MAIN CONTENT VIEW ================== -->
+        <main id="main-content-view" class="flex-1 overflow-y-auto p-8 fade-in relative">
+            
+            <!-- Page Header -->
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h1 class="text-2xl font-semibold tracking-tight text-white mb-1">Action Center</h1>
+                    <p class="text-sm text-textMuted">Real-time overview of pending tasks, alerts, and system health.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="px-4 py-2 text-sm font-medium rounded-md bg-elevated border border-borderline text-textMain hover:bg-surface transition-colors">
+                        <i class="fa-solid fa-download mr-2"></i> Export
+                    </button>
+                    <button class="px-4 py-2 text-sm font-medium rounded-md bg-primary text-white hover:bg-primaryHover shadow-sm shadow-primary/20 transition-all">
+                        <i class="fa-solid fa-plus mr-2"></i> New Action
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <!-- Stat Card 1 -->
+                <div class="bg-surface border border-borderline rounded-xl p-5 flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fa-solid fa-file-contract text-4xl"></i>
+                    </div>
+                    <span class="text-xs font-medium text-textMuted mb-2">Pending Contracts</span>
+                    <span class="text-3xl font-semibold text-white mb-2">34</span>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded font-medium"><i class="fa-solid fa-arrow-trend-up mr-1"></i> 12%</span>
+                        <span class="text-textMuted">vs last week</span>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="bg-surface border border-borderline rounded-xl p-5 flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fa-solid fa-phone-volume text-4xl"></i>
+                    </div>
+                    <span class="text-xs font-medium text-textMuted mb-2">AI Voice Leads (24h)</span>
+                    <span class="text-3xl font-semibold text-white mb-2">1,092</span>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded font-medium"><i class="fa-solid fa-arrow-trend-up mr-1"></i> 8.4%</span>
+                        <span class="text-textMuted">vs yesterday</span>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="bg-surface border border-borderline rounded-xl p-5 flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fa-solid fa-wallet text-4xl"></i>
+                    </div>
+                    <span class="text-xs font-medium text-textMuted mb-2">Financial Engine Processing</span>
+                    <span class="text-3xl font-semibold text-white mb-2">$8.4M</span>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded font-medium"><i class="fa-solid fa-check mr-1"></i> Cleared</span>
+                        <span class="text-textMuted">in pipeline</span>
+                    </div>
+                </div>
+
+                <!-- Stat Card 4 -->
+                <div class="bg-surface border border-borderline rounded-xl p-5 flex flex-col relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fa-solid fa-triangle-exclamation text-4xl text-yellow-500"></i>
+                    </div>
+                    <span class="text-xs font-medium text-textMuted mb-2">CIL Radar Alerts</span>
+                    <span class="text-3xl font-semibold text-white mb-2">7</span>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded font-medium">Requires attention</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts & Lists Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Main Chart Area -->
+                <div class="lg:col-span-2 bg-surface border border-borderline rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-semibold text-textMain">Conversion Velocity (Pipeline vs AI)</h3>
+                        <div class="flex gap-2">
+                            <button class="px-2 py-1 text-xs bg-elevated rounded border border-borderline text-textMain hover:bg-white/5">7D</button>
+                            <button class="px-2 py-1 text-xs bg-primary/20 text-primary rounded border border-primary/30">30D</button>
+                            <button class="px-2 py-1 text-xs bg-elevated rounded border border-borderline text-textMain hover:bg-white/5">1Y</button>
+                        </div>
+                    </div>
+                    <div class="relative h-[300px] w-full">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="bg-surface border border-borderline rounded-xl p-6 flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-semibold text-textMain">Recent Actions</h3>
+                        <button class="text-textMuted hover:text-white text-xs">View All</button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                        <!-- Item 1 -->
+                        <div class="flex gap-3">
+                            <div class="mt-0.5 w-2 h-2 rounded-full bg-primary ring-4 ring-primary/10 shrink-0"></div>
+                            <div>
+                                <p class="text-sm text-textMain">AI Voice Simulator completed batch <span class="font-medium text-purple-400">#892</span></p>
+                                <p class="text-xs text-textMuted mt-1">2 mins ago</p>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="flex gap-3">
+                            <div class="mt-0.5 w-2 h-2 rounded-full bg-green-500 ring-4 ring-green-500/10 shrink-0"></div>
+                            <div>
+                                <p class="text-sm text-textMain">Payment of $150,000 cleared in Financial Engine</p>
+                                <p class="text-xs text-textMuted mt-1">15 mins ago</p>
+                            </div>
+                        </div>
+                        <!-- Item 3 -->
+                        <div class="flex gap-3">
+                            <div class="mt-0.5 w-2 h-2 rounded-full bg-yellow-500 ring-4 ring-yellow-500/10 shrink-0"></div>
+                            <div>
+                                <p class="text-sm text-textMain">CIL Radar detected duplicate client entry (ID: 9932)</p>
+                                <p class="text-xs text-textMuted mt-1">1 hour ago</p>
+                            </div>
+                        </div>
+                        <!-- Item 4 -->
+                        <div class="flex gap-3">
+                            <div class="mt-0.5 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-blue-500/10 shrink-0"></div>
+                            <div>
+                                <p class="text-sm text-textMain">New property added to Inventory: <span class="font-medium">Skyline Tower, Unit 4B</span></p>
+                                <p class="text-xs text-textMuted mt-1">3 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Init Scripts -->
+    <script>
+        // 1. Initialize Chart.js with Linear/Dark theme styling
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // Gradient for line chart
+            const gradientBlue = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientBlue.addColorStop(0, 'rgba(94, 106, 210, 0.4)');
+            gradientBlue.addColorStop(1, 'rgba(94, 106, 210, 0.0)');
+
+            const gradientPurple = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientPurple.addColorStop(0, 'rgba(168, 85, 247, 0.4)');
+            gradientPurple.addColorStop(1, 'rgba(168, 85, 247, 0.0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan 1', 'Jan 5', 'Jan 10', 'Jan 15', 'Jan 20', 'Jan 25', 'Jan 30'],
+                    datasets: [
+                        {
+                            label: 'Sales Pipeline',
+                            data: [65, 78, 60, 92, 85, 105, 120],
+                            borderColor: '#5E6AD2',
+                            backgroundColor: gradientBlue,
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#0A0A0C',
+                            pointBorderColor: '#5E6AD2',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'AI Voice Conversions',
+                            data: [30, 45, 42, 60, 75, 80, 95],
+                            borderColor: '#A855F7',
+                            backgroundColor: gradientPurple,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#0A0A0C',
+                            pointBorderColor: '#A855F7',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1C1C21',
+                            titleColor: '#EDEDED',
+                            bodyColor: '#8A8F98',
+                            borderColor: '#ffffff0f',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#ffffff05',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#8A8F98',
+                                font: { size: 11, family: "'Inter', sans-serif" }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#ffffff05',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#8A8F98',
+                                font: { size: 11, family: "'Inter', sans-serif" },
+                                maxTicksLimit: 6
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // 2. Sidebar Navigation Logic (UI State management)
+        const navButtons = document.querySelectorAll('aside nav button[data-view]');
+        const headerTitle = document.getElementById('header-title');
+        const mainContent = document.getElementById('main-content-view');
+
+        // Helper to format data-view to Title Case
+        const formatTitle = (str) => {
+            return str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        };
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active state from all
+                navButtons.forEach(btn => {
+                    btn.classList.remove('bg-elevated', 'text-textMain', 'border', 'border-borderline', 'shadow-sm');
+                    btn.classList.add('text-textMuted');
+                    
+                    const icon = btn.querySelector('i');
+                    if(btn.dataset.view === 'ai-voice-simulator') {
+                        // AI button has special styling
+                        icon.classList.remove('animate-pulse');
+                    } else {
+                        icon.classList.remove('text-primary');
+                        icon.classList.add('text-textMuted');
+                    }
+                });
+
+                // Add active state to clicked
+                button.classList.add('bg-elevated', 'text-textMain', 'border', 'border-borderline', 'shadow-sm');
+                button.classList.remove('text-textMuted');
+                
+                const activeIcon = button.querySelector('i');
+                if(button.dataset.view === 'ai-voice-simulator') {
+                     activeIcon.classList.add('animate-pulse');
+                } else {
+                    activeIcon.classList.remove('text-textMuted');
+                    activeIcon.classList.add('text-primary');
+                }
+
+                // Update Header Title
+                const viewName = button.getAttribute('data-view');
+                headerTitle.textContent = formatTitle(viewName);
+
+                // Trigger reflow animation on main content
+                mainContent.classList.remove('fade-in');
+                void mainContent.offsetWidth; // trigger reflow
+                mainContent.classList.add('fade-in');
+            });
+        });
+    </script>
+</body>
+</html>

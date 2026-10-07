@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0b10" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="description" content="Octane CRM V8 — Enterprise Real Estate SaaS" />
+  <title>Octane CRM · v8 Enterprise</title>
+
+  <!-- ============================================================
+       FONTS — Inter + JetBrains Mono
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ============================================================
+       FontAwesome 6
+  ============================================================ -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- ============================================================
+       Chart.js 4 (UMD)
+  ============================================================ -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+    crossorigin="anonymous"
+    defer
+  ></script>
+
+  <!-- ============================================================
+       Tailwind CSS JIT via CDN
+  ============================================================ -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            base:        'var(--bg-app)',
+            surface:     'var(--bg-surface)',
+            surface2:    'var(--bg-surface-2)',
+            hover:       'var(--bg-hover)',
+            input:       'var(--bg-input)',
+
+            line:        'var(--border-line)',
+            'line-strong': 'var(--border-strong)',
+            'line-focus':  'var(--border-focus)',
+
+            txt:           'var(--txt-primary)',
+            'txt-secondary':'var(--txt-secondary)',
+            'txt-muted':    'var(--txt-muted)',
+            'txt-dim':      'var(--txt-dim)',
+
+            accent: {
+              DEFAULT: 'var(--accent)',
+              hover:   'var(--accent-hover)',
+              soft:    'var(--accent-soft)',
+            },
+            violet:      'var(--violet)',
+            danger:      'var(--danger)',
+            'danger-soft':'var(--danger-soft)',
+            warn:        'var(--warn)',
+            'warn-soft': 'var(--warn-soft)',
+            ok:          'var(--ok)',
+            'ok-soft':   'var(--ok-soft)',
+            info:        'var(--info)',
+            'info-soft': 'var(--info-soft)',
+          },
+          borderRadius: {
+            xs: '6px',
+            sm: '8px',
+            md: '10px',
+            lg: '12px',
+            xl: '16px',
+            '2xl': '20px',
+          },
+          boxShadow: {
+            card:  'var(--shadow-card)',
+            pop:   'var(--shadow-pop)',
+            modal: 'var(--shadow-modal)',
+            glow:  'var(--shadow-glow)',
+          },
+          keyframes: {
+            pulseSoft:    { '0%,100%': { opacity: 1 }, '50%': { opacity: .45 } },
+            fadeIn:       { '0%': { opacity: 0, transform: 'translateY(6px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            slideUp:      { '0%': { opacity: 0, transform: 'translateY(12px) scale(.98)' }, '100%': { opacity: 1, transform: 'translateY(0) scale(1)' } },
+            slideInRight: { '0%': { opacity: 0, transform: 'translateX(24px)' }, '100%': { opacity: 1, transform: 'translateX(0)' } },
+            ringPulse:    { '0%': { boxShadow: '0 0 0 0 rgba(74,222,128,0.55)' }, '70%': { boxShadow: '0 0 0 10px rgba(74,222,128,0)' }, '100%': { boxShadow: '0 0 0 0 rgba(74,222,128,0)' } },
+            spinSlow:     { to: { transform: 'rotate(360deg)' } },
+          },
+          animation: {
+            pulseSoft:    'pulseSoft 2s ease-in-out infinite',
+            fadeIn:       'fadeIn .22s ease-out both',
+            slideUp:      'slideUp .24s cubic-bezier(.2,.9,.3,1.2) both',
+            slideInRight: 'slideInRight .28s cubic-bezier(.2,.9,.3,1.1) both',
+            ringPulse:    'ringPulse 2s infinite',
+            spinSlow:     'spinSlow 1.4s linear infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- ============================================================
+       Global CSS — tokens, resets, primitives
+  ============================================================ -->
+  <style>
+    /* ==========================================================
+       CSS VARIABLES — DARK (default)
+    ========================================================== */
+    :root,
+    [data-theme="dark"] {
+      color-scheme: dark;
+
+      --bg-app:        #0a0b10;
+      --bg-surface:    #12141c;
+      --bg-surface-2:  #181b25;
+      --bg-hover:      #1f2330;
+      --bg-input:      #0f1118;
+
+      --border-line:   rgba(255,255,255,0.06);
+      --border-strong: rgba(255,255,255,0.12);
+      --border-focus:  rgba(109,140,255,0.55);
+
+      --txt-primary:   #e8eaf0;
+      --txt-secondary: #8a91a6;
+      --txt-muted:     #5a6178;
+      --txt-dim:       #3d4358;
+
+      --accent:        #6d8cff;
+      --accent-hover:  #5b7cff;
+      --accent-soft:   rgba(109,140,255,0.14);
+      --violet:        #8f6dff;
+      --danger:        #ff5d5d;
+      --danger-soft:   rgba(255,93,93,0.12);
+      --warn:          #ffb648;
+      --warn-soft:     rgba(255,182,72,0.12);
+      --ok:            #4ade80;
+      --ok-soft:       rgba(74,222,128,0.12);
+      --info:          #5fc9e8;
+      --info-soft:     rgba(95,201,232,0.12);
+
+      --shadow-card:   0 1px 2px rgba(0,0,0,0.4);
+      --shadow-pop:    0 12px 40px -8px rgba(0,0,0,0.65);
+      --shadow-modal:  0 32px 80px -16px rgba(0,0,0,0.75);
+      --shadow-glow:   0 0 0 3px rgba(109,140,255,0.18);
+
+      --scrollbar-thumb:       rgba(255,255,255,0.08);
+      --scrollbar-thumb-hover: rgba(255,255,255,0.16);
+
+      --sidebar-w: 260px;
+      --header-h:  64px;
+    }
+
+    /* ==========================================================
+       CSS VARIABLES — LIGHT
+    ========================================================== */
+    [data-theme="light"] {
+      color-scheme: light;
+
+      --bg-app:        #f7f8fb;
+      --bg-surface:    #ffffff;
+      --bg-surface-2:  #f1f2f6;
+      --bg-hover:      #e8eaef;
+      --bg-input:      #f8f9fc;
+
+      --border-line:   rgba(15,20,40,0.08);
+      --border-strong: rgba(15,20,40,0.16);
+      --border-focus:  rgba(79,110,220,0.55);
+
+      --txt-primary:   #14161f;
+      --txt-secondary: #5c6273;
+      --txt-muted:     #8b92a5;
+      --txt-dim:       #b6bbca;
+
+      --accent:        #4f6edc;
+      --accent-hover:  #3f5cc4;
+      --accent-soft:   rgba(79,110,220,0.10);
+      --violet:        #7c5adb;
+      --danger:        #e04040;
+      --danger-soft:   rgba(224,64,64,0.10);
+      --warn:          #d99420;
+      --warn-soft:     rgba(217,148,32,0.10);
+      --ok:            #20a850;
+      --ok-soft:       rgba(32,168,80,0.10);
+      --info:          #2298b8;
+      --info-soft:     rgba(34,152,184,0.10);
+
+      --shadow-card:   0 1px 2px rgba(15,20,40,0.06);
+      --shadow-pop:    0 12px 40px -8px rgba(15,20,40,0.14);
+      --shadow-modal:  0 32px 80px -16px rgba(15,20,40,0.22);
+      --shadow-glow:   0 0 0 3px rgba(79,110,220,0.16);
+
+      --scrollbar-thumb:       rgba(15,20,40,0.15);
+      --scrollbar-thumb-hover: rgba(15,20,40,0.28);
+    }
+
+    /* ==========================================================
+       RESET
+    ========================================================== */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: var(--bg-app);
+      color: var(--txt-primary);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-feature-settings: 'cv02','cv03','cv04','cv11';
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+      transition: background-color .2s ease, color .2s ease;
+    }
+    body { font-size: 14px; line-height: 1.5; }
+    button { font-family: inherit; }
+    h1, h2, h3, h4, h5, p { margin: 0; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ==========================================================
+       SCROLLBARS
+    ========================================================== */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
+      background-clip: padding-box;
+    }
+    * { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+
+    /* ==========================================================
+       FOCUS + SELECTION
+    ========================================================== */
+    :focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+    ::selection { background: var(--accent-soft); color: var(--txt-primary); }
+
+    /* ==========================================================
+       APP SHELL LAYOUT
+    ========================================================== */
+    #app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+    @media (max-width: 1024px) {
+      #app-shell { grid-template-columns: 0 1fr; }
+      #app-sidebar { transform: translateX(-100%); }
+      #app-sidebar.is-mobile-open { transform: translateX(0); }
+    }
+
+    /* ==========================================================
+       SIDEBAR
+    ========================================================== */
+    #app-sidebar {
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-line);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      transition: transform .25s ease;
+      z-index: 40;
+    }
+    .nav-group-label {
+      padding: 16px 12px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--txt-dim);
+      user-select: none;
+    }
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--txt-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color .15s ease, background-color .15s ease;
+      user-select: none;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+    .nav-item:hover {
+      color: var(--txt-primary);
+      background: var(--bg-hover);
+    }
+    .nav-item.is-active,
+    .nav-item[aria-current="page"] {
+      color: var(--txt-primary);
+      background: var(--accent-soft);
+    }
+    .nav-item.is-active::before,
+    .nav-item[aria-current="page"]::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--accent);
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-item .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: inherit;
+      flex-shrink: 0;
+    }
+    .nav-item .nav-label { flex: 1; min-width: 0; }
+    .nav-item .nav-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      border-color: var(--danger);
+      opacity: .9;
+    }
+    .nav-item .nav-kbd {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--txt-muted);
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-line);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ==========================================================
+       HEADER
+    ========================================================== */
+    #app-header {
+      background: var(--bg-app);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      border-bottom: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 20px;
+      height: var(--header-h);
+      flex-shrink: 0;
+      z-index: 30;
+      position: relative;
+    }
+
+    /* ==========================================================
+       BUTTONS
+    ========================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s, transform .1s, filter .15s;
+      white-space: nowrap;
+      font-family: inherit;
+      line-height: 1;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+
+    .btn-secondary {
+      background: var(--bg-surface-2);
+      color: var(--txt-primary);
+      border-color: var(--border-line);
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--bg-hover); border-color: var(--border-strong); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--txt-secondary);
+      border-color: transparent;
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--bg-hover); color: var(--txt-primary); }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+    .btn-danger:hover:not(:disabled) { filter: brightness(1.08); }
+
+    .btn-sm { height: 28px; padding: 0 10px; font-size: 11.5px; }
+    .btn-lg { height: 40px; padding: 0 20px; font-size: 13.5px; }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--txt-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .15s ease;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover {
+      color: var(--txt-primary);
+      background: var(--bg-hover);
+      border-color: var(--border-line);
+    }
+    .icon-btn-sm {
+      width: 28px; height: 28px; font-size: 12px; border-radius: 6px;
+    }
+
+    /* ==========================================================
+       CHIP (pill toggle)
+    ========================================================== */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-line);
+      color: var(--txt-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .chip:hover {
+      color: var(--txt-primary);
+      background: var(--bg-hover);
+      border-color: var(--border-strong);
+    }
+    .chip.is-active {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-glow);
+    }
+    .chip[data-variant="ok"].is-active {
+      background: var(--ok); border-color: var(--ok);
+      box-shadow: 0 0 0 3px var(--ok-soft);
+    }
+    .chip[data-variant="warn"].is-active {
+      background: var(--warn); border-color: var(--warn); color: #1a1205;
+      box-shadow: 0 0 0 3px var(--warn-soft);
+    }
+    .chip[data-variant="danger"].is-active {
+      background: var(--danger); border-color: var(--danger);
+      box-shadow: 0 0 0 3px var(--danger-soft);
+    }
+
+    /* ==========================================================
+       KPI CHIP (header)
+    ========================================================== */
+    .kpi-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-line);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--txt-secondary);
+      white-space: nowrap;
+    }
+    .kpi-chip strong {
+      color: var(--txt-primary);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-chip.is-danger strong { color: var(--danger); }
+    .kpi-chip.is-ok     strong { color: var(--ok); }
+    .kpi-chip.is-warn   strong { color: var(--warn); }
+
+    /* ==========================================================
+       MAIN CONTENT VIEW
+    ========================================================== */
+    #main-content-view {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 24px 32px 48px;
+      scroll-behavior: smooth;
+      background: var(--bg-app);
+      position: relative;
+    }
+    #main-content-view::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(1200px 600px at 15% -10%, var(--accent-soft), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(143,109,255,0.04), transparent 55%);
+    }
+    @media (max-width: 768px) {
+      #main-content-view { padding: 16px 16px 40px; }
+    }
+
+    .view-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      animation: fadeIn .22s ease-out both;
+    }
+
+    /* ==========================================================
+       MODAL OVERLAY
+    ========================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(5,6,10,0.72);
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+    }
+    .modal-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      box-shadow: var(--shadow-modal);
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(8px) scale(.98);
+      transition: transform .24s cubic-bezier(.2,.9,.3,1.1);
+    }
+    .modal-overlay.is-open .modal-panel { transform: translateY(0) scale(1); }
+    .modal-panel.is-wide  { max-width: 720px; }
+    .modal-panel.is-xwide { max-width: 960px; }
+
+    /* ==========================================================
+       DRAWER (Lead Interaction)
+    ========================================================== */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(520px, 100vw);
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-line);
+      box-shadow: var(--shadow-modal);
+      transform: translateX(100%);
+      transition: transform .28s cubic-bezier(.2,.9,.3,1.1);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .drawer.is-open { transform: translateX(0); }
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,6,10,0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1400;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease;
+    }
+    .drawer-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ==========================================================
+       VERTICAL ACTIVITY TIMELINE
+    ========================================================== */
+    .timeline { position: relative; padding-left: 4px; }
+    .timeline-item {
+      position: relative;
+      padding: 10px 0 10px 32px;
+      display: flex;
+      gap: 10px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 30px;
+      bottom: 0;
+      width: 1px;
+      background: var(--border-line);
+    }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot {
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-line);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    /* ==========================================================
+       TOASTS
+    ========================================================== */
+    #toast-host {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 10px;
+      pointer-events: none;
+      max-width: min(420px, calc(100vw - 32px));
+    }
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-line);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      box-shadow: var(--shadow-pop);
+      font-size: 13px;
+      color: var(--txt-primary);
+      animation: slideInRight .28s cubic-bezier(.2,.9,.3,1.1) both;
+    }
+    .toast.is-success { border-left-color: var(--ok); }
+    .toast.is-error   { border-left-color: var(--danger); }
+    .toast.is-warning { border-left-color: var(--warn); }
+    .toast.is-info    { border-left-color: var(--accent); }
+
+    /* ==========================================================
+       FORM CONTROLS
+    ========================================================== */
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--txt-secondary);
+      margin-bottom: 6px;
+    }
+    .field-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-line);
+      color: var(--txt-primary);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .field-input::placeholder { color: var(--txt-muted); }
+    textarea.field-input {
+      height: auto;
+      padding: 10px 12px;
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.55;
+    }
+    select.field-input {
+      appearance: none;
+      padding-right: 32px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a91a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+
+    /* ==========================================================
+       UTILITY
+    ========================================================== */
+    .is-hidden { display: none !important; }
+    .surface-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-line);
+      border-radius: 12px;
+    }
+    .divider-y > * + * {
+      border-top: 1px solid var(--border-line);
+    }
+    .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ==========================================================
+       LOADING SPLASH
+    ========================================================== */
+    #app-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: var(--bg-app);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+    }
+    #app-loading .brand-mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 24px;
+      color: #fff;
+      box-shadow: 0 12px 40px -8px rgba(109,140,255,0.5);
+    }
+    #app-loading .spin {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-line);
+      border-top-color: var(--accent);
+      animation: spinSlow .9s linear infinite;
+    }
+
+    /* ==========================================================
+       DROPDOWN MENU (user switcher, notifications)
+    ========================================================== */
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 260px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      box-shadow: var(--shadow-pop);
+      padding: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity .15s ease, transform .15s ease;
+      z-index: 200;
+    }
+    .dropdown.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--txt-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .12s ease;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+    }
+    .dropdown-item:hover {
+      background: var(--bg-hover);
+      color: var(--txt-primary);
+    }
+    .dropdown-separator {
+      height: 1px;
+      background: var(--border-line);
+      margin: 6px 4px;
+    }
+    .dropdown-label {
+      padding: 8px 10px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--txt-dim);
+    }
+
+    /* ==========================================================
+       AVATAR
+    ========================================================== */
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), var(--violet));
+      font-family: inherit;
+      user-select: none;
+    }
+    .avatar-xs { width: 22px; height: 22px; font-size: 10px; }
+    .avatar-sm { width: 28px; height: 28px; font-size: 11px; }
+    .avatar-md { width: 36px; height: 36px; font-size: 13px; }
+    .avatar-lg { width: 44px; height: 44px; font-size: 15px; }
+    .avatar-xl { width: 64px; height: 64px; font-size: 22px; }
+
+    /* ==========================================================
+       RESPONSIVE
+    ========================================================== */
+    @media (max-width: 1280px) {
+      #global-search-wrapper { max-width: 320px; }
+      #header-kpi-strip { display: none; }
+    }
+    @media (max-width: 900px) {
+      #app-header { padding: 0 12px; gap: 8px; }
+      #global-search-wrapper { max-width: 200px; }
+    }
+    @media (max-width: 640px) {
+      #global-search-wrapper { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       LOADING SPLASH
+  ============================================================ -->
+  <div id="app-loading" role="status" aria-live="polite">
+    <div class="brand-mark" aria-hidden="true">O</div>
+    <div class="spin" aria-hidden="true"></div>
+    <p class="text-txt-muted text-xs tracking-widest uppercase">
+      Initializing Octane CRM · v8
+    </p>
+  </div>
+
+  <!-- ============================================================
+       APP SHELL
+  ============================================================ -->
+  <div id="app-shell" class="is-hidden">
+
+    <!-- ==========================================================
+         SIDEBAR
+    ========================================================== -->
+    <aside
+      id="app-sidebar"
+      aria-label="Primary navigation"
+    >
+      <!-- Brand -->
+      <div class="px-5 pt-5 pb-4 flex items-center gap-3 border-b border-line shrink-0">
+        <div
+          class="w-9 h-9 rounded-lg flex items-center justify-center font-extrabold text-white text-sm shrink-0"
+          style="background: linear-gradient(135deg, var(--accent), var(--violet)); box-shadow: 0 6px 20px -6px rgba(109,140,255,.55);"
+          aria-hidden="true"
+        >O</div>
+        <div class="min-w-0">
+          <div class="text-txt font-semibold text-[13px] leading-tight truncate">
+            Octane CRM
+          </div>
+          <div class="text-txt-muted text-[10px] font-medium tracking-widest uppercase">
+            v8 · Enterprise
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto px-3 py-2 min-h-0" aria-label="Modules">
+
+        <!-- WORKSPACE -->
+        <div class="nav-group-label">Workspace</div>
+
+        <button type="button" class="nav-item is-active" data-view="action-center" aria-current="page">
+          <i class="fa-solid fa-bolt nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Action Center</span>
+          <span class="nav-badge" data-badge="sla-critical">0</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="sales-pipeline">
+          <i class="fa-solid fa-diagram-project nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Sales Pipeline</span>
+          <span class="nav-kbd">⌘1</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="property-inventory">
+          <i class="fa-solid fa-building-columns nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Property Inventory</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="cil-radar">
+          <i class="fa-solid fa-satellite-dish nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">CIL Radar</span>
+          <span class="nav-kbd">⌘2</span>
+        </button>
+
+        <!-- INTELLIGENCE -->
+        <div class="nav-group-label">Intelligence</div>
+
+        <button type="button" class="nav-item" data-view="financial-engine">
+          <i class="fa-solid fa-chart-line nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Financial Engine</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="ai-voice-simulator">
+          <i class="fa-solid fa-microphone-lines nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">AI Voice Simulator</span>
+          <span class="nav-kbd">Beta</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="analytics">
+          <i class="fa-solid fa-chart-pie nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Analytics</span>
+        </button>
+
+        <!-- ADMINISTRATION -->
+        <div class="nav-group-label">Administration</div>
+
+        <button type="button" class="nav-item" data-view="users">
+          <i class="fa-solid fa-users-gear nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">User Management</span>
+          <span class="nav-kbd">Teams</span>
+        </button>
+
+        <button type="button" class="nav-item" data-view="settings">
+          <i class="fa-solid fa-gear nav-icon" aria-hidden="true"></i>
+          <span class="nav-label">Settings</span>
+          <span class="nav-kbd">⌘,</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar footer — current user mini -->
+      <div class="border-t border-line p-3 flex items-center gap-2 shrink-0">
+        <div class="avatar avatar-sm" data-current-user-avatar>Y</div>
+        <div class="min-w-0 flex-1">
+          <div class="text-txt text-[12px] font-semibold truncate" data-current-user-name>Youssef</div>
+          <div class="text-txt-muted text-[10px] truncate" data-current-user-role>Admin</div>
+        </div>
+        <button
+          type="button"
+          class="icon-btn icon-btn-sm"
+          data-view="settings"
+          aria-label="Open settings"
+          title="Settings"
+        >
+          <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==========================================================
+         MAIN COLUMN
+    ========================================================== -->
+    <div class="flex flex-col min-h-0 min-w-0">
+
+      <!-- ========================================================
+           HEADER
+      ======================================================== -->
+      <header id="app-header" role="banner">
+
+        <!-- Mobile menu toggle -->
+        <button
+          type="button"
+          class="icon-btn lg:hidden"
+          data-action="toggle-mobile-sidebar"
+          aria-label="Toggle navigation"
+        >
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+
+        <!-- View title -->
+        <div class="min-w-0 shrink-0">
+          <h1 id="view-title" class="text-txt text-[15px] font-semibold leading-tight truncate">
+            Action Center
+          </h1>
+          <p id="view-subtitle" class="text-txt-muted text-[11px] leading-tight truncate">
+            Real-time SLA monitoring
+          </p>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block w-px h-6 bg-line-strong shrink-0" aria-hidden="true"></div>
+
+        <!-- Global Search -->
+        <div id="global-search-wrapper" class="hidden md:flex flex-1 min-w-0 max-w-lg">
+          <label class="relative flex-1 min-w-0" aria-label="Global search">
+            <i
+              class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-txt-muted text-[12px] pointer-events-none"
+              aria-hidden="true"
+            ></i>
+            <input
+              id="global-search"
+              type="search"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search leads, projects, phone…"
+              class="w-full h-9 pl-9 pr-16 text-[13px] rounded-lg bg-input border border-line text-txt placeholder:text-txt-muted focus:border-line-focus focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
+            />
+            <kbd
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono font-semibold text-txt-muted bg-surface2 border border-line rounded px-1.5 py-0.5 pointer-events-none"
+            >⌘K</kbd>
+          </label>
+        </div>
+
+        <!-- Right cluster -->
+        <div class="flex items-center gap-2 shrink-0 ml-auto">
+
+          <!-- KPI Strip -->
+          <div id="header-kpi-strip" class="hidden xl:flex items-center gap-1.5" aria-label="Quick KPIs">
+            <div class="kpi-chip" title="Total active pipeline value">
+              <i class="fa-solid fa-sack-dollar text-txt-muted text-[10px]" aria-hidden="true"></i>
+              <span>Pipeline</span>
+              <strong id="hdr-kpi-pipeline">$0</strong>
+            </div>
+            <div class="kpi-chip is-danger" title="Overdue follow-ups">
+              <i class="fa-solid fa-triangle-exclamation text-[10px]" aria-hidden="true"></i>
+              <span>Overdue</span>
+              <strong id="hdr-kpi-overdue">0</strong>
+            </div>
+            <div class="kpi-chip is-ok" title="Close rate">
+              <i class="fa-solid fa-trophy text-[10px]" aria-hidden="true"></i>
+              <span>Win&nbsp;Rate</span>
+              <strong id="hdr-kpi-winrate">0%</strong>
+            </div>
+            <div class="kpi-chip is-warn" title="Hot leads">
+              <i class="fa-solid fa-fire text-[10px]" aria-hidden="true"></i>
+              <span>Hot</span>
+              <strong id="hdr-kpi-hot">0</strong>
+            </div>
+          </div>
+
+          <div class="hidden lg:block w-px h-6 bg-line-strong" aria-hidden="true"></div>
+
+          <!-- Sync status -->
+          <div
+            class="hidden lg:flex items-center gap-2 px-2.5 h-8 rounded-lg bg-surface2 border border-line"
+            title="Cross-tab sync status"
+          >
+            <span id="sync-dot" class="w-2 h-2 rounded-full bg-ok animate-ringPulse" aria-hidden="true"></span>
+            <span id="sync-label" class="text-txt-secondary text-[11px] font-medium">Live</span>
+          </div>
+
+          <!-- Theme toggle -->
+          <button
+            type="button"
+            class="icon-btn"
+            data-action="toggle-theme"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            <i id="theme-icon" class="fa-solid fa-moon" aria-hidden="true"></i>
+          </button>
+
+          <!-- Notifications -->
+          <button
+            type="button"
+            class="icon-btn relative"
+            data-action="toggle-notifications"
+            aria-label="Notifications"
+            title="Notifications"
+          >
+            <i class="fa-regular fa-bell" aria-hidden="true"></i>
+            <span
+              id="notification-dot"
+              class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger is-hidden"
+              aria-hidden="true"
+            ></span>
+          </button>
+
+          <!-- New Lead -->
+          <button
+            type="button"
+            class="btn btn-primary hidden sm:inline-flex"
+            data-action="open-lead-form"
+            title="Add lead (⌘N)"
+          >
+            <i class="fa-solid fa-plus text-[11px]" aria-hidden="true"></i>
+            <span>New Lead</span>
+          </button>
+
+          <!-- Current User Badge / Switcher -->
+          <div class="relative">
+            <button
+              type="button"
+              class="flex items-center gap-2 h-9 pl-1 pr-2 rounded-lg border border-line bg-surface2 hover:border-line-strong hover:bg-hover transition-all"
+              data-action="toggle-user-menu"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              title="Switch user"
+            >
+              <div class="avatar avatar-sm" data-current-user-avatar>Y</div>
+              <div class="hidden md:block text-left min-w-0">
+                <div class="text-txt text-[12px] font-semibold leading-tight truncate max-w-[100px]" data-current-user-name>Youssef</div>
+                <div class="text-txt-muted text-[10px] leading-tight truncate max-w-[100px]" data-current-user-role>Admin</div>
+              </div>
+              <i class="fa-solid fa-chevron-down text-txt-muted text-[10px] hidden md:block" aria-hidden="true"></i>
+            </button>
+
+            <!-- User dropdown -->
+            <div id="user-menu" class="dropdown" role="menu" aria-label="User switcher">
+              <div class="dropdown-label">Switch Account</div>
+
+              <div id="user-menu-list">
+                <!-- Populated by JS: one entry per user -->
+              </div>
+
+              <div class="dropdown-separator"></div>
+
+              <button type="button" class="dropdown-item" data-action="open-user-modal" role="menuitem">
+                <i class="fa-solid fa-user-plus w-4 text-center text-[12px]" aria-hidden="true"></i>
+                <span>Add User</span>
+              </button>
+
+              <button type="button" class="dropdown-item" data-view="users" role="menuitem">
+                <i class="fa-solid fa-users-gear w-4 text-center text-[12px]" aria-hidden="true"></i>
+                <span>Manage Team</span>
+              </button>
+
+              <div class="dropdown-separator"></div>
+
+              <button type="button" class="dropdown-item" data-view="settings" role="menuitem">
+                <i class="fa-solid fa-gear w-4 text-center text-[12px]" aria-hidden="true"></i>
+                <span>Settings</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ========================================================
+           MAIN CONTENT VIEW — every module mounts here
+      ======================================================== -->
+      <main
+        id="main-content-view"
+        role="main"
+        aria-live="polite"
+        aria-busy="false"
+      >
+        <!-- Modules render into this element via Router.navigate() -->
+      </main>
+
+    </div><!-- /main column -->
+  </div><!-- /#app-shell -->
+
+
+  <!-- ============================================================
+       LEAD INTERACTION DRAWER (right slide-in)
+  ============================================================ -->
+  <div id="drawer-backdrop" class="drawer-backdrop" data-action="close-drawer" aria-hidden="true"></div>
+
+  <aside
+    id="drawer-lead-interaction"
+    class="drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawer-lead-name"
+    aria-hidden="true"
+  >
+    <!-- Drawer header -->
+    <header class="px-5 py-4 border-b border-line shrink-0 flex items-center gap-3">
+      <div class="avatar avatar-lg" data-drawer-lead="avatar">Y</div>
+      <div class="flex-1 min-w-0">
+        <h2 id="drawer-lead-name" class="text-txt text-[15px] font-semibold leading-tight truncate" data-drawer-lead="name">—</h2>
+        <p class="text-txt-muted text-[11px] truncate" data-drawer-lead="contact">—</p>
+      </div>
+      <button
+        type="button"
+        class="icon-btn"
+        data-action="close-drawer"
+        aria-label="Close drawer"
+        title="Close"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <!-- Drawer body (scrollable) -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- Quick action row -->
+      <div class="px-5 py-3 border-b border-line flex items-center gap-2 flex-wrap">
+        <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-call">
+          <i class="fa-solid fa-phone text-[10px]" aria-hidden="true"></i>
+          Call
+        </button>
+        <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-whatsapp">
+          <i class="fa-brands fa-whatsapp text-[11px] text-ok" aria-hidden="true"></i>
+          WhatsApp
+        </button>
+        <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-email">
+          <i class="fa-solid fa-envelope text-[10px]" aria-hidden="true"></i>
+          Email
+        </button>
+        <button type="button" class="btn btn-sm btn-secondary" data-action="drawer-edit">
+          <i class="fa-solid fa-pen text-[10px]" aria-hidden="true"></i>
+          Edit
+        </button>
+        <div class="ml-auto flex items-center gap-1.5">
+          <span
+            class="text-[10px] font-bold tracking-widest uppercase text-txt-muted"
+            data-drawer-lead="stage-label"
+          >—</span>
+        </div>
+      </div>
+
+      <!-- Call Dispositions bar -->
+      <section class="px-5 py-4 border-b border-line">
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-[10px] font-bold tracking-widest uppercase text-txt-muted">
+            Call Disposition
+          </span>
+          <span class="text-[10px] text-txt-muted" data-drawer-lead="last-contact">—</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" class="chip" data-action="lead-disposition" data-value="answered" data-variant="ok">
+            <i class="fa-solid fa-phone-volume text-[10px]" aria-hidden="true"></i>
+            Answered
+          </button>
+          <button type="button" class="chip" data-action="lead-disposition" data-value="no_answer">
+            <i class="fa-solid fa-phone-slash text-[10px]" aria-hidden="true"></i>
+            No Answer
+          </button>
+          <button type="button" class="chip" data-action="lead-disposition" data-value="busy">
+            <i class="fa-solid fa-circle-xmark text-[10px]" aria-hidden="true"></i>
+            Busy
+          </button>
+          <button type="button" class="chip" data-action="lead-disposition" data-value="voicemail">
+            <i class="fa-solid fa-voicemail text-[10px]" aria-hidden="true"></i>
+            Voicemail
+          </button>
+          <button type="button" class="chip" data-action="lead-disposition" data-value="call_back" data-variant="warn">
+            <i class="fa-solid fa-rotate-left text-[10px]" aria-hidden="true"></i>
+            Call Back
+          </button>
+          <button type="button" class="chip" data-action="lead-disposition" data-value="wrong_number" data-variant="danger">
+            <i class="fa-solid fa-triangle-exclamation text-[10px]" aria-hidden="true"></i>
+            Wrong #
+          </button>
+        </div>
+      </section>
+
+      <!-- Follow-up chips -->
+      <section class="px-5 py-4 border-b border-line">
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-[10px] font-bold tracking-widest uppercase text-txt-muted">
+            Schedule Follow-Up
+          </span>
+          <button
+            type="button"
+            class="text-[10px] font-semibold text-accent hover:text-accent-hover"
+            data-action="lead-followup-custom"
+          >
+            Custom →
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" class="chip" data-action="lead-followup" data-value="today">
+            <i class="fa-regular fa-clock text-[10px]" aria-hidden="true"></i>
+            Today
+          </button>
+          <button type="button" class="chip" data-action="lead-followup" data-value="tomorrow">
+            <i class="fa-regular fa-sun text-[10px]" aria-hidden="true"></i>
+            Tomorrow
+          </button>
+          <button type="button" class="chip" data-action="lead-followup" data-value="3_days">
+            <i class="fa-regular fa-calendar text-[10px]" aria-hidden="true"></i>
+            3 Days
+          </button>
+          <button type="button" class="chip" data-action="lead-followup" data-value="1_week">
+            <i class="fa-regular fa-calendar-plus text-[10px]" aria-hidden="true"></i>
+            1 Week
+          </button>
+          <button type="button" class="chip" data-action="lead-followup" data-value="2_weeks">
+            <i class="fa-regular fa-calendar-plus text-[10px]" aria-hidden="true"></i>
+            2 Weeks
+          </button>
+          <button type="button" class="chip" data-action="lead-followup" data-value="1_month">
+            <i class="fa-regular fa-calendar-check text-[10px]" aria-hidden="true"></i>
+            1 Month
+          </button>
+        </div>
+        <div class="mt-2.5 text-[11px] text-txt-muted" data-drawer-lead="followup-summary">
+          No follow-up scheduled
+        </div>
+      </section>
+
+      <!-- Summary grid -->
+      <section class="px-5 py-4 border-b border-line">
+        <div class="grid grid-cols-2 gap-3" data-drawer-lead="summary">
+          <div class="surface-card p-3">
+            <div class="text-[10px] font-bold tracking-widest uppercase text-txt-muted mb-1">Project</div>
+            <div class="text-[12px] text-txt font-medium truncate" data-drawer-lead="project">—</div>
+          </div>
+          <div class="surface-card p-3">
+            <div class="text-[10px] font-bold tracking-widest uppercase text-txt-muted mb-1">Budget</div>
+            <div class="text-[12px] text-txt font-medium truncate" data-drawer-lead="budget">—</div>
+          </div>
+          <div class="surface-card p-3">
+            <div class="text-[10px] font-bold tracking-widest uppercase text-txt-muted mb-1">Source</div>
+            <div class="text-[12px] text-txt font-medium truncate" data-drawer-lead="channel">—</div>
+          </div>
+          <div class="surface-card p-3">
+            <div class="text-[10px] font-bold tracking-widest uppercase text-txt-muted mb-1">Agent</div>
+            <div class="text-[12px] text-txt font-medium truncate" data-drawer-lead="agent">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vertical Activity Timeline -->
+      <section class="px-5 py-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] font-bold tracking-widest uppercase text-txt-muted">
+            Activity Timeline
+          </span>
+          <button
+            type="button"
+            class="text-[10px] font-semibold text-accent hover:text-accent-hover"
+            data-action="drawer-view-full-audit"
+          >
+            View All →
+          </button>
+        </div>
+        <div id="drawer-timeline" class="timeline">
+          <!-- Populated by JS -->
+          <div class="text-center py-8 text-txt-muted text-[12px]">
+            Loading activity…
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Drawer composer (sticky footer) -->
+    <footer class="border-t border-line px-5 py-3 shrink-0 bg-surface">
+      <div class="flex items-end gap-2">
+        <textarea
+          id="drawer-note-input"
+          rows="1"
+          placeholder="Add a note, log a call outcome…"
+          class="flex-1 field-input !min-h-[40px] !h-[40px] !py-2.5 resize-none"
+        ></textarea>
+        <button
+          type="button"
+          class="btn btn-primary shrink-0"
+          data-action="drawer-add-note"
+          title="Add note"
+        >
+          <i class="fa-solid fa-paper-plane text-[11px]" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mt-1.5 flex items-center justify-between text-[10px] text-txt-muted">
+        <span>
+          <i class="fa-solid fa-user text-[9px] mr-1" aria-hidden="true"></i>
+          <span data-current-user-name>—</span>
+        </span>
+        <span class="font-mono">⌘↵ to send</span>
+      </div>
+    </footer>
+  </aside>
+
+
+  <!-- ============================================================
+       MODAL — Lead Form
+  ============================================================ -->
+  <div class="modal-overlay" id="modal-lead-form" role="dialog" aria-modal="true" aria-labelledby="modal-lead-form-title">
+    <div class="modal-panel is-wide">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center text-accent shrink-0" aria-hidden="true">
+            <i class="fa-solid fa-user-plus text-[13px]"></i>
+          </span>
+          <h2 id="modal-lead-form-title" class="text-txt text-[14px] font-semibold truncate">New Lead</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-lead-form" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex items-center gap-1 border-b border-line px-5">
+        <button type="button" class="btn-ghost btn h-10 !rounded-none border-b-2 border-accent text-accent" data-tab="lead-form-basic">
+          Basic
+        </button>
+        <button type="button" class="btn-ghost btn h-10 !rounded-none border-b-2 border-transparent text-txt-secondary" data-tab="lead-form-details">
+          Details
+        </button>
+        <button type="button" class="btn-ghost btn h-10 !rounded-none border-b-2 border-transparent text-txt-secondary" data-tab="lead-form-followup">
+          Follow-Up
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5" data-modal-body="lead-form">
+        <!-- Basic tab -->
+        <div data-tab-panel="lead-form-basic" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="hidden" id="lf-id" />
+          <div class="md:col-span-2">
+            <label class="field-label" for="lf-name">Full Name <span class="text-danger">*</span></label>
+            <input id="lf-name" type="text" class="field-input" placeholder="e.g. Ahmed Hassan" autocomplete="off" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-phone">Phone</label>
+            <input id="lf-phone" type="text" class="field-input" placeholder="+20 1xx xxx xxxx" autocomplete="off" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-email">Email</label>
+            <input id="lf-email" type="email" class="field-input" placeholder="email@example.com" autocomplete="off" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-stage">Stage</label>
+            <select id="lf-stage" class="field-input">
+              <!-- Options populated by JS -->
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="lf-agent">Assigned Agent</label>
+            <select id="lf-agent" class="field-input">
+              <!-- Options populated by JS -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Details tab -->
+        <div data-tab-panel="lead-form-details" class="is-hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="field-label" for="lf-channel">Channel / Source</label>
+            <select id="lf-channel" class="field-input">
+              <!-- Options populated by JS -->
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="lf-project">Project</label>
+            <select id="lf-project" class="field-input">
+              <!-- Options populated by JS -->
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="lf-budget">Budget (USD)</label>
+            <input id="lf-budget" type="number" min="0" step="1000" class="field-input" placeholder="250000" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-location">Location</label>
+            <input id="lf-location" type="text" class="field-input" placeholder="e.g. New Cairo" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-priority">Priority</label>
+            <select id="lf-priority" class="field-input">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="field-label" for="lf-requirements">Requirements</label>
+            <textarea id="lf-requirements" class="field-input" placeholder="Bedrooms, size, floor, view…"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label class="field-label" for="lf-note">Initial Note</label>
+            <textarea id="lf-note" class="field-input" placeholder="Optional first note…"></textarea>
+          </div>
+        </div>
+
+        <!-- Follow-up tab -->
+        <div data-tab-panel="lead-form-followup" class="is-hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="field-label" for="lf-followup-date">Follow-Up Date</label>
+            <input id="lf-followup-date" type="date" class="field-input" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-followup-time">Follow-Up Time</label>
+            <input id="lf-followup-time" type="time" class="field-input" value="10:00" />
+          </div>
+          <div>
+            <label class="field-label" for="lf-sla-hours">SLA Hours</label>
+            <input id="lf-sla-hours" type="number" min="1" max="168" class="field-input" value="24" />
+            <p class="text-[10px] text-txt-muted mt-1">Hours before due → warning state</p>
+          </div>
+          <div class="md:col-span-2">
+            <label class="field-label" for="lf-followup-note">Follow-Up Note</label>
+            <input id="lf-followup-note" type="text" class="field-input" placeholder="What to discuss…" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="btn btn-ghost" data-modal-close="modal-lead-form">Cancel</button>
+        <button type="button" class="btn btn-primary" data-action="save-lead-form">
+          <i class="fa-solid fa-floppy-disk text-[11px]" aria-hidden="true"></i>
+          Save Lead
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL — WhatsApp Composer
+  ============================================================ -->
+  <div class="modal-overlay" id="modal-whatsapp" role="dialog" aria-modal="true" aria-labelledby="modal-whatsapp-title">
+    <div class="modal-panel">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background: rgba(37,211,102,0.14); color: #25d366;" aria-hidden="true">
+            <i class="fa-brands fa-whatsapp text-[14px]"></i>
+          </span>
+          <h2 id="modal-whatsapp-title" class="text-txt text-[14px] font-semibold">Send WhatsApp</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-whatsapp" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5 space-y-4" data-modal-body="whatsapp">
+        <div>
+          <label class="field-label" for="wa-phone">Phone Number</label>
+          <input id="wa-phone" type="tel" class="field-input" placeholder="+201xxxxxxxxx" autocomplete="off" />
+        </div>
+        <div>
+          <label class="field-label" for="wa-template-select">Template</label>
+          <select id="wa-template-select" class="field-input">
+            <option value="">— Select —</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="wa-message">Message</label>
+          <textarea id="wa-message" class="field-input" style="min-height:160px;"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="btn btn-ghost" data-modal-close="modal-whatsapp">Cancel</button>
+        <button type="button" class="btn" data-action="send-whatsapp" style="background: rgba(37,211,102,0.14); color:#25d366; border: 1px solid rgba(37,211,102,0.3);">
+          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          Open WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL — Import Data
+  ============================================================ -->
+  <div class="modal-overlay" id="modal-import" role="dialog" aria-modal="true" aria-labelledby="modal-import-title">
+    <div class="modal-panel">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-info-soft flex items-center justify-center text-info" aria-hidden="true">
+            <i class="fa-solid fa-file-import text-[13px]"></i>
+          </span>
+          <h2 id="modal-import-title" class="text-txt text-[14px] font-semibold">Import Data</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-import" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5" data-modal-body="import">
+        <div
+          id="import-drop-zone"
+          data-action="open-import-picker"
+          class="border-2 border-dashed border-line rounded-xl py-12 text-center cursor-pointer transition-all hover:border-accent hover:bg-accent-soft"
+        >
+          <div class="text-4xl mb-3 opacity-60" aria-hidden="true">📂</div>
+          <p class="text-txt text-[13px] font-semibold">Drop your JSON backup here</p>
+          <p class="text-txt-muted text-[11px] mt-1">or click to browse</p>
+          <input type="file" id="import-file-input" accept=".json,application/json" class="is-hidden" />
+        </div>
+        <div id="import-validation" class="mt-4"></div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="btn btn-ghost" data-modal-close="modal-import">Cancel</button>
+        <button type="button" id="btn-modal-import-confirm" class="btn btn-primary" data-action="confirm-import" disabled>
+          <i class="fa-solid fa-check text-[11px]" aria-hidden="true"></i>
+          Import
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL — User Management (Add / Edit User)
+  ============================================================ -->
+  <div class="modal-overlay" id="modal-user-form" role="dialog" aria-modal="true" aria-labelledby="modal-user-form-title">
+    <div class="modal-panel is-wide">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center text-accent shrink-0" aria-hidden="true">
+            <i class="fa-solid fa-user-plus text-[13px]"></i>
+          </span>
+          <h2 id="modal-user-form-title" class="text-txt text-[14px] font-semibold truncate">Add Team Member</h2>
+        </div>
+        <button type="button" class="icon-btn" data-modal-close="modal-user-form" aria-label="Close">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5" data-modal-body="user-form">
+        <input type="hidden" id="uf-id" />
+
+        <!-- Avatar block -->
+        <div class="flex items-center gap-4 mb-5">
+          <div id="uf-avatar-preview" class="avatar avatar-xl">?</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-txt text-[13px] font-medium mb-1">Profile Photo</div>
+            <div class="text-txt-muted text-[11px] mb-2">JPG, PNG up to 2 MB — or initials will be used</div>
+            <div class="flex items-center gap-2">
+              <button type="button" class="btn btn-sm btn-secondary" data-action="uf-upload-avatar">
+                <i class="fa-solid fa-upload text-[10px]" aria-hidden="true"></i>
+                Upload
+              </button>
+              <button type="button" class="btn btn-sm btn-ghost" data-action="uf-clear-avatar">
+                Remove
+              </button>
+              <input type="file" id="uf-avatar-input" accept="image/png,image/jpeg" class="is-hidden" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="field-label" for="uf-name">Full Name <span class="text-danger">*</span></label>
+            <input id="uf-name" type="text" class="field-input" placeholder="e.g. Youssef Hassan" autocomplete="off" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="field-label" for="uf-email">Email <span class="text-danger">*</span></label>
+            <input id="uf-email" type="email" class="field-input" placeholder="name@company.com" autocomplete="off" />
+          </div>
+
+          <div>
+            <label class="field-label" for="uf-role">Role</label>
+            <select id="uf-role" class="field-input">
+              <option value="sales_rep">Sales Rep</option>
+              <option value="team_leader">Team Leader</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="field-label" for="uf-status">Status</label>
+            <select id="uf-status" class="field-input">
+              <option value="active">Active</option>
+              <option value="invited">Invited (pending)</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="field-label" for="uf-password">Temporary Password <span class="text-danger">*</span></label>
+            <div class="relative">
+              <input id="uf-password" type="password" class="field-input pr-20" placeholder="Min 8 characters" autocomplete="new-password" />
+              <button
+                type="button"
+                class="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-accent hover:text-accent-hover px-2 py-1"
+                data-action="uf-toggle-password"
+              >
+                Show
+              </button>
+            </div>
+            <label class="flex items-center gap-2 mt-2 text-[11px] text-txt-secondary cursor-pointer">
+              <input type="checkbox" id="uf-send-invite" class="w-3.5 h-3.5 rounded border-line bg-input text-accent focus:ring-accent" checked />
+              Send welcome email with password reset link
+            </label>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="field-label">Permissions Preview</label>
+            <div id="uf-permissions" class="surface-card p-3 text-[11px] text-txt-secondary leading-relaxed">
+              <ul class="space-y-1">
+                <li><i class="fa-solid fa-check text-ok mr-1.5" aria-hidden="true"></i>View & manage own leads</li>
+                <li><i class="fa-solid fa-check text-ok mr-1.5" aria-hidden="true"></i>Send WhatsApp / log calls</li>
+                <li><i class="fa-solid fa-xmark text-danger mr-1.5" aria-hidden="true"></i>Manage users & team settings</li>
+                <li><i class="fa-solid fa-xmark text-danger mr-1.5" aria-hidden="true"></i>Export / clear company data</li>
+              </ul>
+            </div>
+          </div>
+
+          <div id="uf-errors" class="md:col-span-2 is-hidden text-[11px] text-danger"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between px-5 py-3 border-t border-line shrink-0">
+        <button type="button" class="btn btn-ghost text-danger hidden" id="uf-delete-btn" data-action="delete-user">
+          <i class="fa-solid fa-trash text-[10px]" aria-hidden="true"></i>
+          Delete
+        </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button type="button" class="btn btn-ghost" data-modal-close="modal-user-form">Cancel</button>
+          <button type="button" class="btn btn-primary" data-action="save-user-form">
+            <i class="fa-solid fa-floppy-disk text-[11px]" aria-hidden="true"></i>
+            Save User
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       MODAL — Confirm
+  ============================================================ -->
+  <div class="modal-overlay" id="modal-confirm" role="alertdialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+    <div class="modal-panel" style="max-width: 420px;">
+      <div class="px-6 pt-6 pb-4 text-center">
+        <div id="confirm-icon" class="text-3xl mb-3" aria-hidden="true">⚠️</div>
+        <h2 id="modal-confirm-title" class="text-txt text-[15px] font-semibold mb-1.5">Are you sure?</h2>
+        <p id="confirm-message" class="text-txt-secondary text-[13px] leading-relaxed">This action cannot be undone.</p>
+      </div>
+      <div class="flex items-center justify-center gap-2 px-6 pb-6">
+        <button type="button" id="confirm-cancel" class="btn btn-secondary">
+          Cancel
+        </button>
+        <button type="button" id="confirm-ok" class="btn btn-danger">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       GLOBAL HOSTS
+  ============================================================ -->
+  <div id="toast-host" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- App script -->
+  <script src="app.js" defer></script>
+</body>
+</html>
